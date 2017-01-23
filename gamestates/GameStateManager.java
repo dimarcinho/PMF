@@ -10,8 +10,7 @@ public class GameStateManager {
     public LinkedList<GameState> states;
     
     public GameStateManager(){
-        states = new LinkedList<GameState>();
-        states.push(new MenuState(this));        
+        states = new LinkedList<>();       
     }
     
     public void init(){}
@@ -27,6 +26,17 @@ public class GameStateManager {
     public void keyReleased(KeyEvent e){    
         states.peek().keyReleased(e);
     }
+    
+    public void addState(GameState state){
+        if(state != null)        
+            states.push(state);
+    }
+    
+    public void removeState(GameState state){
+        if(state != null)        
+            states.pop();
+    }
+    
     
     public void setState(GameState state){
         if(!states.isEmpty())        

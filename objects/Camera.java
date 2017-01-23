@@ -25,8 +25,8 @@ public class Camera {
         this.logic = map.logicGrid;
         
         //tamanho do enquadramento da câmera
-        this.width = 800;
-        this.height = 800;
+        this.width = 1024;
+        this.height = 768;
         
         //usando na verdade 100% da área como câmera do jogo:
         //this.width = PMF.WIDTH;

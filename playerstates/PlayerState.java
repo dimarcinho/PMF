@@ -20,7 +20,6 @@ public abstract class PlayerState {
     public PlayerState(Player player, PlayerStateManager psm){
         this.p = player;
         this.psm = psm;
-        init();
     }
     
     public abstract void init();

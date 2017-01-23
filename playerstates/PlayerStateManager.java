@@ -35,6 +35,7 @@ public class PlayerStateManager {
         if(!states.isEmpty())        
             states.pop();        
         states.push(state);
+        //System.out.println(states.peek().getClass().getName());
     }
     
     public PlayerState getState(){

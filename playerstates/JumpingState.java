@@ -4,19 +4,34 @@
  */
 package playerstates;
 
+import audioEngine.AudioPlayer;
+import audioEngine.SoundManager;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import objects.Player;
 
 public class JumpingState extends PlayerState {
     
+    private AudioPlayer audioplayer;
+    
     public JumpingState(Player p, PlayerStateManager psm){
         super(p, psm);        
-        init();    
+        init();
     }
     
     @Override
     public void init() {
+        /*
+        new Thread(new Runnable(){
+                   @Override
+                   public void run(){
+                       audioplayer = new AudioPlayer("/res/audio/sfx/Pickup_Coin.wav", 1);
+                       audioplayer.play();
+                   }
+        }).start();
+         * 
+         */
+    
     }
     
     @Override
@@ -40,12 +55,14 @@ public class JumpingState extends PlayerState {
         p.y += p.vy;
         
         p.checkLimits();
+        p.sc.update();
     }
 
     @Override
     public void draw(Graphics g) {
         //desenhar sprites do jumping...        
         p.draw(g);
+        p.sc.draw(g);
     }
 
     @Override
@@ -83,10 +100,10 @@ public class JumpingState extends PlayerState {
 
         } 
         if(key == KeyEvent.VK_LEFT) {
-            //p.vx = 0;
+            p.vx = -1;
         } 
         if(key == KeyEvent.VK_RIGHT){
-            //p.vx = 0;
+            p.vx = 1;
         }   
     }
 

@@ -24,7 +24,7 @@ public class SDVEnemy extends Enemy {
         x0 = x - 80;
         xf = x + 80;        
 
-        this.ss = new SpriteSheet(i.load("/res/SDV.png"));
+        this.ss = new SpriteSheet(i.load("/res/img/SDV.png"));
         
         //this.setFrames(0, 1);
         this.frameSpeed = 8; //quanto maior, mais lento

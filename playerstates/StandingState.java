@@ -46,6 +46,7 @@ public class StandingState extends PlayerState {
         p.y += p.vy;
         
         p.checkLimits();
+        p.sc.update();
 
     }
 
@@ -53,6 +54,7 @@ public class StandingState extends PlayerState {
     public void draw(Graphics g) {
         //desenhar sprites do standing...
         p.draw(g);
+        p.sc.draw(g);
     }
 
     @Override

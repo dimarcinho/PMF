@@ -33,7 +33,7 @@ public class EnemyA extends Enemy {
         
         this.setXLimits(100,80);
         
-        this.ss = new SpriteSheet(i.load("/res/Válvula Borboleta.png"));
+        this.ss = new SpriteSheet(i.load("/res/img/Válvula Borboleta.png"));
         
         this.setFrames(0, 10);
         this.frameSpeed = 3;

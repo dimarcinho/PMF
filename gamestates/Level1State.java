@@ -1,25 +1,19 @@
 
 package gamestates;
 
-import objects.Player;
+import audioEngine.*;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
-import objects.Camera;
-import objects.Collisions;
-import objects.EnemyA;
-import objects.EnemyController;
-import objects.Item;
-import objects.ItemController;
-import objects.MapTile;
-import objects.PumpEnemy;
-import objects.SDVEnemy;
-import objects.Score;
-import playerstates.JumpingState;
-import playerstates.PlayerStateManager;
+import objects.*;
+import observerpattern.*;
+import playerstates.*;
+import pmf.GamePanel;
 
-public class Level1State extends GameState {
+
+public class Level1State extends GameState implements Subject {
     
     public Player player;    
     public PlayerStateManager psm;
@@ -29,26 +23,33 @@ public class Level1State extends GameState {
     public Collisions collisions;
     public EnemyController ec;
     public ItemController ic;
-        
-    String background = "/res/background_sky.png";
-    String bg1 = "/res/background_sea.png";
     
-    public Item teste;
+    private ArrayList<Observer> observers;
+    
+    //private static AudioPlayer bgMusic;
+        
+    String background = "/res/img/background_sky.png";
+    String bg1 = "/res/img/background_sea.png";
+    
+    public Item greenFlag;
     
     public Level1State(GameStateManager gsm){
         super(gsm);
         
+        observers = new ArrayList<Observer>();
+        
         score = new Score();
         
-        player = new Player(100, 100);
+        player = new Player(6000, 10);
+        //player = new Player(100, 10);
         
-        map = new MapTile(32, "/res/levelteste.png");
+        map = new MapTile(32, "/res/img/levelteste.png");
         
         camera = new Camera(player, map);
         
         psm = new PlayerStateManager();
         
-        psm.setState(new JumpingState(this.player, this.psm));
+        psm.setState(new StandingState(this.player, this.psm));
         
         ec = new EnemyController();
         ic = new ItemController();
@@ -67,31 +68,34 @@ public class Level1State extends GameState {
         ec.addEnemy(new SDVEnemy(10*map.tsize, 13*map.tsize));
         ec.addEnemy(new PumpEnemy(15*map.tsize, 13*map.tsize));
         
-        ic.addItem(new Item(199*map.tsize,11*map.tsize,0));
-        ic.addItem(new Item(20*map.tsize,13*map.tsize,0));        
+        greenFlag = new Item(197*map.tsize,9*map.tsize,1);
+        
+        ic.addItem(greenFlag);
+        
         ic.addItem(new Item(19*map.tsize,13*map.tsize,0));
         ic.addItem(new Item(18*map.tsize,13*map.tsize,0));
         ic.addItem(new Item(17*map.tsize,13*map.tsize,0));
         ic.addItem(new Item(16*map.tsize,13*map.tsize,0));
-        ic.addItem(new Item(20*map.tsize,12*map.tsize,0));        
         ic.addItem(new Item(19*map.tsize,12*map.tsize,0));
         ic.addItem(new Item(18*map.tsize,12*map.tsize,0));
         ic.addItem(new Item(17*map.tsize,12*map.tsize,0));
-        ic.addItem(new Item(16*map.tsize,12*map.tsize,0));
-        ic.addItem(new Item(20*map.tsize,11*map.tsize,0));        
+        ic.addItem(new Item(16*map.tsize,12*map.tsize,0));        
         ic.addItem(new Item(19*map.tsize,11*map.tsize,0));
         ic.addItem(new Item(18*map.tsize,11*map.tsize,0));
         ic.addItem(new Item(17*map.tsize,11*map.tsize,0));
         ic.addItem(new Item(16*map.tsize,11*map.tsize,0));
+
+
         
-        //ic.addItem(new Item(5*map.tsize,5*map.tsize,0));
-        teste = new Item(5*map.tsize, 5*map.tsize, 0);
         
-        init();
+        this.init();
     }
 
     @Override
-    public void init() {                
+    public void init() {
+                        
+        GamePanel.amp.loop("/res/audio/music/level1-1.mp3");
+
     }
 
     @Override
@@ -115,17 +119,18 @@ public class Level1State extends GameState {
         psm.update();        
         ec.update();
         ic.update();
-        player.update();
         collisions.update();
+        //desenvolver metodologia para morte em buracos
         if(player.y > 1220)
             player.reset();
         camera.update(psm.states.peek().p);
         
-        if(player.x > 250){
+        if(player.getBounds().intersects(greenFlag.getBounds())){
+            //bgMusic.close();
+            GamePanel.amp.stopAllSounds();
             gsm.states.push(new Boss1LevelState(this.gsm));
         }
-        
-        //ic.addItem(new Item(199*map.tsize,11*map.tsize,0));
+
     }
     
 
@@ -135,8 +140,7 @@ public class Level1State extends GameState {
         g.drawImage(this.getBackgroundImage(bg1), 0, 700, null);
         
         camera.draw(g);
-        
-        player.draw(g);
+
         psm.draw(g);
         ec.draw(g);
         ic.draw(g);
@@ -155,7 +159,6 @@ public class Level1State extends GameState {
     @Override
     public void keyPressed(KeyEvent e) {
         psm.keyPressed(e);
-        //player.keyPressed(e);
         
         if(e.getKeyCode() == KeyEvent.VK_P){
             gsm.states.push(new PausedState(this.gsm));
@@ -164,11 +167,37 @@ public class Level1State extends GameState {
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
             System.exit(0);
         }
+        //testando stop all sounds
+        if(e.getKeyCode() == KeyEvent.VK_ENTER){
+            //implementar pra testar
+            GamePanel.amp.stopAllSounds();
+        }
+        
+        //testando sons
+        if(e.getKeyCode() == KeyEvent.VK_K){
+            GamePanel.amp.play2("JUMP");
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        psm.keyReleased(e);
-        //player.keyReleased(e);
+        psm.keyReleased(e);        
+    }
+
+    @Override
+    public void addObserver(Observer o) {
+        this.observers.add(o);
+    }
+
+    @Override
+    public void removeObserver(Observer o) {
+        this.observers.remove(o);
+    }
+
+    @Override
+    public void notify(String s) {
+        for(Observer o: observers){
+            o.onNotify(s);
+        }
     }
 }

@@ -1,6 +1,7 @@
 
 package boss_states;
 
+import boss_states.boss1.Boss;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 

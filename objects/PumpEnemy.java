@@ -24,7 +24,7 @@ public class PumpEnemy extends Enemy {
         x0 = x - 90;
         xf = x + 90;        
 
-        this.ss = new SpriteSheet(i.load("/res/pump enemy3.png"));
+        this.ss = new SpriteSheet(i.load("/res/img/pump enemy3.png"));
         
         
         this.changeDirection();

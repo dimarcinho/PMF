@@ -19,8 +19,8 @@ public class MapTile {
     public ImageLoader i = new ImageLoader();
     public BufferedImage image;
     
-    String nuvem_path = "/res/nuvem.png";
-    String tiles = "/res/tiles.png";
+    String nuvem_path = "/res/img/nuvem.png";
+    String tiles = "/res/img/tiles.png";
     
     private String mapfile;
     

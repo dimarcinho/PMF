@@ -4,6 +4,7 @@
  */
 package objects;
 
+import audioEngine.AudioPlayer;
 import playerstates.JumpingState;
 import playerstates.PlayerStateManager;
 import playerstates.StandingState;
@@ -19,6 +20,8 @@ public class Collisions {
     public ParticleGenerator p_gen;
     
     public boolean collided;
+    
+    private AudioPlayer audioplayer;
     
     public Collisions(PlayerStateManager psm, MapTile map,
                         EnemyController ec, ItemController ic){
@@ -51,6 +54,7 @@ public class Collisions {
         
         
         if(map.getLogic(row0, col0) == 0 && map.getLogic(row0+1, col0) == 0){
+            //checar aqui que se o estado for jumping, não fazer nada!!!!
             psm.setState(new JumpingState(this.p, this.psm)); 
         }
         
@@ -81,7 +85,7 @@ public class Collisions {
             psm.setState(new StandingState(psm.states.peek().p, this.psm));
         
         } else if(map.getTileBounds(row0+1, col0).intersects(p.getGhostBounds()) && map.getLogic(row0+1, col0) == 0){
-                    
+                   //checar aqui que se o estado for jumping, não fazer nada!!!!
                    psm.setState(new JumpingState(psm.states.peek().p, this.psm)); 
                    
         }
@@ -94,11 +98,20 @@ public class Collisions {
             
             if(this.p.getBounds().intersects(ic.items.get(i).getBounds())){
                 //System.out.println("pegou item!");                
-                p_gen.addParticles(ic.items.get(i).x,ic.items.get(i).y,50);
+                p_gen.addBasicParticles(ic.items.get(i).x,ic.items.get(i).y,50);
                 ic.removeItem(ic.items.get(i));
                 Score s = new Score();
                 s.notify("GET_BBL");
                 s = null;
+                
+                new Thread(new Runnable(){
+                           @Override
+                           public void run(){
+                               audioplayer = new AudioPlayer("/res/audio/sfx/Pickup_Coin.wav");
+                               audioplayer.play();
+                           }
+                }).start();
+                
             }
             
         }
@@ -127,13 +140,22 @@ public class Collisions {
                 //colisão do tiro com inimigo
                 
                 if(ec.enemies.get(i).getBounds().intersects(p.sc.shots.get(j).getBounds())){
-                    p_gen.addParticles(ec.enemies.get(i).x, ec.enemies.get(i).y, 150);      
+                    p_gen.addBasicParticles(ec.enemies.get(i).x, ec.enemies.get(i).y, 150);      
                     //System.out.println(ec.enemies.get(i).x+","+ec.enemies.get(i).y);
                     ec.enemies.remove(i);
                     p.sc.shots.remove(j);
                     Score s = new Score();
                     s.notify("KILL_ENEMY");
-                    s = null;                    
+                    s = null;
+                    
+                    new Thread(new Runnable(){
+                           @Override
+                           public void run(){
+                               audioplayer = new AudioPlayer("/res/audio/sfx/Hit_Hurt6.wav");
+                               audioplayer.play();
+                           }
+                    }).start();
+                    
                     break;
                 } else if(p.sc.shots.get(j).x < 0 || p.sc.shots.get(j).x > map.col*map.tsize){
                     //se o objeto sair dos limites do mapa, ele é destruído

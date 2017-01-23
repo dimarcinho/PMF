@@ -35,7 +35,7 @@ public class Shot extends Animated  {
     @Override
     public void init(){        
                 
-        this.ss = new SpriteSheet(i.load("/res/Shot Calculator.png"));
+        this.ss = new SpriteSheet(i.load("/res/img/Shot Calculator.png"));
         
         this.startFrame = 0;
         this.endFrame = startFrame + 3;

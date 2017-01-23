@@ -24,12 +24,17 @@ public class ParticleGenerator {
         this.n = n;
         
         particles = new LinkedList<Particle>();
-        
-        this.addParticles(x,y,n);
+                
+    }
+    
+    public void addParticles(int x, int y, int vx, int vy,
+                            int size, int life, Color c){
+                
+        particles.push(new Particle(x, y, vx, vy, size, life, c));
         
     }
     
-    public void addParticles(int x, int y, int n){
+    public void addBasicParticles(int x, int y, int n){
         
         this.n =  n;
         
@@ -48,9 +53,17 @@ public class ParticleGenerator {
             int size = rnd.nextInt(3);
             int life = rnd.nextInt(10)+10;            
             
-            particles.push(new Particle(x,y, vx, vy, size, life, Color.red));
+            particles.push(new Particle(x, y, vx, vy, size, life, Color.red));
                     
         }
+        
+    }
+    
+    public int rndAB(int a, int b){                
+        int rndAB;
+        Random rnd = new Random();
+        rndAB = a+rnd.nextInt(b-a+1);
+        return rndAB;
     }
     
     public void update(){        
@@ -61,6 +74,10 @@ public class ParticleGenerator {
                     particles.pop();
                 }
         }
+    }
+    
+    public void removeAll(){
+        particles.clear();
     }
     
     public void draw(Graphics g){

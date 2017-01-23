@@ -9,10 +9,11 @@ import javax.swing.JFrame;
 
 public class PMF {
 
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 800;
+    public static final int WIDTH = 1024;
+    public static final int HEIGHT = 768;
     
     //usar tiles de Y x Y
+    
 
     public static void main(String[] args) {
 

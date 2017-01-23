@@ -1,12 +1,13 @@
 
 package objects;
 
-import java.awt.Color;
+import audioEngine.AudioPlayer;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
+import pmf.GamePanel;
 
 public class Player extends Animated {
     
@@ -22,11 +23,14 @@ public class Player extends Animated {
     
     public Rectangle ghost;
     
-    String petroleiro = "/res/petroleiro_piskel.png";
+    String petroleiro = "/res/img/petroleiro_piskel.png";
+    
+    private AudioPlayer audioplayer;
     
     public Player(int x, int y){
         
-        this.ss = new SpriteSheet(i.load("/res/petroleiro_teste_spritesheet.png"));
+        //this.ss = new SpriteSheet(i.load("/res/img/petroleiro_teste_spritesheet.png"));
+        this.ss = new SpriteSheet(i.load("/res/img/petroleiro_cartoon_color2.png"));
         
         this.x = x;
         this.y = y;
@@ -50,13 +54,17 @@ public class Player extends Animated {
         
         sc = new ShotController();
         
+        this.tsize = 64;
+        this.setFrames(0, 0); //0,2
+        
         init();
     }
     
+    @Override
     public void init(){
 
-        this.setFrames(0, 1);
-        this.frameSpeed = 5; //quanto maior, mais lento
+        this.setFrames(0, 2); //0,2
+        this.frameSpeed = 10; //quanto maior, mais lento
     }
     
     public void reset(){
@@ -65,7 +73,17 @@ public class Player extends Animated {
         this.y = 100;
         vx = 0;
         vy = 0;
-        accX = 0;        
+        accX = 0;
+        sc.removeAll();
+        
+        audioplayer = new AudioPlayer("/res/audio/sfx/Death.wav");
+        audioplayer.play();
+        int i = 0;
+        while(i < 100000){
+            //just wait
+            i++;
+            //System.out.println(i);
+        }
     }
     
     @Override
@@ -90,7 +108,7 @@ public class Player extends Animated {
         
         if(vx > 0){
             
-            this.setFrames(1, 2);
+            this.setFrames(3, 9); //3,9
             this.direction = 1;
             
         } else if(vx < 0){
@@ -102,7 +120,7 @@ public class Player extends Animated {
         if(vx == 0){
             
             if(direction > 0){
-                this.setFrames(0, 0);
+                this.setFrames(0, 0); //0,2
             } else {
                 this.setFrames(7, 0);
             }
@@ -133,26 +151,28 @@ public class Player extends Animated {
             lastXdir = false;
         if(vx < 0)
             lastXdir = true;                   
-        
-        /* //para melhorar o pulo, estudar valores
-        if(vx >= 0){
-            g = 1;
-        } else {
-            g = 2;
-        }
-         * 
-         */
+
         
     }
     
     public void shoot(){
         Shot shot = new Shot(x,y,lastXdir);
         sc.addShot(shot);
+        
+        new Thread(new Runnable(){
+               @Override
+               public void run(){
+                   audioplayer = new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav");
+                   audioplayer.play();
+                   //GamePanel.amp.play2("SHOT");
+               }
+        }).start();
     }
-    
+
     @Override
     public Rectangle getBounds(){
         Rectangle r = new Rectangle(this.x, this.y-32, 32, 64);
+        //Rectangle r = new Rectangle(this.x, this.y, 64, 64);
         return r;    
     }
     
@@ -168,27 +188,42 @@ public class Player extends Animated {
     
     @Override
     public void draw(Graphics g){
-        g.setColor(Color.red);        
+        //g.setColor(Color.red);        
         //g.fillRect(this.getBounds().x, this.getBounds().y, this.getBounds().width, this.getBounds().height);
         //g.setColor(Color.black);
         //g.drawString("x: "+this.x+", y: "+this.y, 300, 400);
         
         //g.drawRect(this.getGhostBounds().x, this.getGhostBounds().y, 32, 32);
         
-        //g.drawImage(getAnimatedImage(), x, y, null);
+        //g.drawImage(this.getAnimatedImage(), this.x, this.y, null);
+        //g.drawImage(ss.crop2(64*frameNumber, 0, 64, 64), this.x, this.y, null);
         
-        g.setColor(Color.black);        
-        //g.fillRect(x, y-32, 32, 64);
-        
-        g.drawImage(this.getImage(petroleiro), this.x, this.y-32, null);
-        
+        g.drawImage(this.getImage(petroleiro), this.x, this.y-32, null);        
         sc.draw(g);
     }
-
     
-    public void collision(Rectangle r){
-                            
-    }    
+    @Override
+    public void Animation(){
+        
+        frameSS = ss.crop2(tsize*frameNumber, 0, tsize, tsize);
+        
+        if(counterSS % frameSpeed == 0){
+            if(frameNumber < endFrame){
+                frameNumber++;
+            } else {
+                frameNumber = startFrame;
+            }   
+        }
+        
+        if(counterSS > 20*frameSpeed){
+            counterSS = 0;
+        } else {
+            counterSS++;
+        }
+        
+        if(vx == 0 && vy == 0)
+            counterSS--;
+    }
     
     public void keyPressed(KeyEvent e){
 

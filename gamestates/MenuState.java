@@ -16,10 +16,10 @@ public class MenuState extends GameState {
     
     private Image fpsoImg, background_1, background_2;
     
-    String background = "/res/background_sky.png";
-    String bg2 = "/res/background_sea.png";
+    String background = "/res/img/background_sky.png";
+    String bg2 = "/res/img/background_sea.png";
     
-    String fpso = "/res/FPSO.gif";
+    String fpso = "/res/img/FPSO.gif";
     
     public MenuState(GameStateManager gsm){
         super(gsm);
@@ -63,9 +63,7 @@ public class MenuState extends GameState {
         g.fillRect(0, 0, PMF.WIDTH, PMF.HEIGHT);
         g.drawImage(background_1, 0, 0, null);
         g.drawImage(fpsoImg, 150, 500, null);
-        g.drawImage(background_2, 0, 600, null);
-        //g.fillRect(150, 530, 330, 120);
-        
+        g.drawImage(background_2, 0, 600, null);        
         
         //desenha o menu
         g.setColor(Color.DARK_GRAY);        
@@ -100,6 +98,7 @@ public class MenuState extends GameState {
         if(k == KeyEvent.VK_ENTER){
             if(select == 0){
                 gsm.states.push(new Level1State(gsm));
+                //gsm.states.push(new Boss1LevelState(gsm));
                 //System.out.println("Em desenvolvimento...");
             } else {
                 System.exit(0);

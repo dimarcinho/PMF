@@ -23,6 +23,10 @@ public class ShotController {
         shots.remove(e);
     }
     
+    public void removeAll(){
+        shots.clear();
+    }
+    
     public void update(){
         for(Shot e : shots){
             e.update();

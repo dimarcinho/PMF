@@ -59,6 +59,7 @@ public class WalkingState extends PlayerState {
         p.y += p.vy;
         
         p.checkLimits();
+        p.sc.update();
         
         if(p.vx == 0 && p.vy == 0)
             this.psm.setState(new StandingState(this.p, this.psm)); 
@@ -69,6 +70,7 @@ public class WalkingState extends PlayerState {
     public void draw(Graphics g) {
         //desenhar sprites do standing...
         p.draw(g);
+        p.sc.draw(g);
     }
 
     @Override
@@ -81,20 +83,17 @@ public class WalkingState extends PlayerState {
             System.out.println("UP!");
             this.psm.setState(new JumpingState(this.p, this.psm));
             
-        } 
-        if(key == KeyEvent.VK_DOWN) {            
+        } else if(key == KeyEvent.VK_DOWN) {            
                        
-        } 
-        if(key == KeyEvent.VK_LEFT) { 
+        } else if(key == KeyEvent.VK_LEFT) { 
             
             p.accX = -p.acc0;            
 
-        } 
-        if(key == KeyEvent.VK_RIGHT){
+        } else if(key == KeyEvent.VK_RIGHT){
 
             p.accX = +p.acc0;            
 
-        }
+        } 
         
         if(key == KeyEvent.VK_SPACE){
             p.shoot();

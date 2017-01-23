@@ -1,8 +1,8 @@
 
 package pmf;
 
-import gamestates.GameStateManager;
-import java.awt.Color;
+import audioEngine.AudioPlayerManager;
+import gamestates.*;
 import java.awt.event.KeyEvent;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -21,9 +21,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Image dbImage;
     private Graphics dbg;
     String background = "/res/background_sea.png";
-    
-    
+        
     private int FPS;
+    
+    public static AudioPlayerManager amp;
     
     public GamePanel(){
         
@@ -31,12 +32,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         
         FPS = 60;
         gsm = new GameStateManager();
+        gsm.setState(new MenuState(this.gsm)); //define o início do jogo
         addKeyListener(this);
+        
+        amp = new AudioPlayerManager();
         
         init();
                         
         t = new Timer(10, this);
         t.start();
+        
         
         
     }

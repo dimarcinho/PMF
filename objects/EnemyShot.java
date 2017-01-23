@@ -29,7 +29,7 @@ public class EnemyShot extends Shot {
     
     @Override
     public void init(){
-        this.ss = new SpriteSheet(i.load("/res/oil shot.png"));
+        this.ss = new SpriteSheet(i.load("/res/img/oil shot.png"));
         this.setFrames(0, 7);
         this.frameSpeed = 8; //quanto maior, mais lento                
         this.speed = 10;
