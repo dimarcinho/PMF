@@ -43,11 +43,14 @@ public class StandingState extends PlayerState {
     public void update() {
         
         p.vy = p.g;
+        p.vy = 0;
         
         p.x += p.vx;
         p.y += p.vy;
         
         p.checkLimits();
+        p.Animation();
+        p.changeDirection();
         p.sc.update();
 
     }
@@ -65,8 +68,8 @@ public class StandingState extends PlayerState {
         
         if(key == KeyEvent.VK_UP){
 
-            p.vy -= p.jumpspeed;
-            System.out.println("UP!");
+            p.jump(id);
+            //System.out.println("UP!");
             this.psm.setState(new JumpingState(this.p, this.psm));                
             
         } 
@@ -75,14 +78,12 @@ public class StandingState extends PlayerState {
             
         } 
         if(key == KeyEvent.VK_LEFT) { 
-            p.accX = -p.acc0;
-            p.vx += p.accX;
+            p.moveLeft();
             this.psm.setState(new WalkingState(this.p, this.psm));        
 
         } 
         if(key == KeyEvent.VK_RIGHT){
-            p.accX = +p.acc0;
-            p.vx += p.accX;
+            p.moveRight();
             this.psm.setState(new WalkingState(this.p, this.psm)); 
 
         }        

@@ -44,6 +44,8 @@ public class JumpingState extends PlayerState {
         p.y += p.vy;
         
         p.checkLimits();
+        p.Animation();
+        p.changeDirection();
         p.sc.update();
     }
 
@@ -66,11 +68,13 @@ public class JumpingState extends PlayerState {
         } 
         if(key == KeyEvent.VK_LEFT) {
             
-            p.vx = -p.speed;            
+            //p.vx = -p.speed;            
+            p.flyLeft();
         } 
         if(key == KeyEvent.VK_RIGHT){
 
-            p.vx = +p.speed;            
+            //p.vx = +p.speed;            
+            p.flyRight();
         }
         
         if(key == KeyEvent.VK_SPACE){

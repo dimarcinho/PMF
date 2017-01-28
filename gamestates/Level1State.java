@@ -26,7 +26,7 @@ public class Level1State extends GameState implements Subject {
     
     private ArrayList<Observer> observers;
 
-    String background = "/res/img/background_sky.png";
+    String background = "/res/img/background_pink.png";
     String bg1 = "/res/img/background_sea.png";
     
     public Item greenFlag;
@@ -38,8 +38,8 @@ public class Level1State extends GameState implements Subject {
         
         score = new Score();
         
-        player = new Player(6000, 10);
-        //player = new Player(100, 10);
+        //player = new Player(6000, 10);
+        player = new Player(100, 10);
         
         map = new MapTile(32, "/res/img/levelteste.png");
         
@@ -83,7 +83,7 @@ public class Level1State extends GameState implements Subject {
         ic.addItem(new Item(17*map.tsize,11*map.tsize,0));
         ic.addItem(new Item(16*map.tsize,11*map.tsize,0));
         
-        this.init();
+        init();
     }
 
     @Override
@@ -141,6 +141,8 @@ public class Level1State extends GameState implements Subject {
         ic.draw(g);
         
         collisions.p_gen.draw(g);        
+        
+        player.draw(g);
         
         g.translate(-camera.offsetX, -camera.offsetY);
         score.draw(g);

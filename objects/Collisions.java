@@ -48,6 +48,7 @@ public class Collisions implements Subject {
         //adicionando Observers
         this.addObserver(this.score);
         this.addObserver(GamePanel.amp);
+        this.addObserver(psm);
     }
     
     public void update(){
@@ -149,7 +150,8 @@ public class Collisions implements Subject {
             
             if(this.p.getBounds().intersects(ec.enemies.get(i).getBounds())){
                 System.out.println("Colisão com inimigo detectada!!!!");
-                this.p.reset();
+                notify("PLAYER_HURT");
+                //this.p.reset();
             }
             
         }

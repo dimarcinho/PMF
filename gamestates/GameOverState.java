@@ -5,12 +5,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import objects.Score;
 import pmf.PMF;
 
 
 public class GameOverState extends GameState {
     
     private int count = 0;
+    private int lastPoints = 0;
     
     public GameOverState(GameStateManager gsm){
         super(gsm);
@@ -18,7 +20,13 @@ public class GameOverState extends GameState {
     }
 
     
-    public void init() {}
+    @Override
+    public void init() {
+    
+        Score score = new Score();
+        lastPoints = score.getPoints();
+        score.reset();
+    }
     
     @Override
     public void reset() {

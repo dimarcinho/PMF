@@ -4,12 +4,14 @@
  */
 package input;
 
+import objects.Animated;
+
 /**
  *
  * @author Marcio
  */
-abstract class Command {
+public interface Command {
     
-    abstract public void execute();
+    void execute();
     
 }

@@ -11,9 +11,11 @@ import pmf.GamePanel;
 
 public class Player extends Animated {
     
-    public int x, y, vx, vy, vxmax, vymax;    
+    public int vxmax, vymax;    
     public int xg, yx; // variáveis para checar a colisão
-    public int speed, acc0, accX, jumpspeed, g;
+    public int acc0, accX, jumpspeed, g;
+    
+    public int lifes, lifePoints;
     
     public Point left, right, top, bottom;
     public ShotController sc;
@@ -29,11 +31,14 @@ public class Player extends Animated {
     
     public Player(int x, int y){
         
-        this.ss = new SpriteSheet(i.load("/res/img/petroleiro_teste_spritesheet.png"));
-        //this.ss = new SpriteSheet(i.load("/res/img/petroleiro_cartoon_color2.png"));
+        //this.ss = new SpriteSheet(i.load("/res/img/petroleiro_teste_spritesheet.png"));
+        this.ss = new SpriteSheet(i.load("/res/img/petroleiro_cartoon_color2.png"));
         
         this.x = x;
         this.y = y;
+        
+        this.lifes = 3;
+        this.lifePoints = 5;
         
         this.top = new Point(this.x+16, this.y);
         this.bottom = new Point(this.x+16, this.y+32);
@@ -54,8 +59,7 @@ public class Player extends Animated {
         
         sc = new ShotController();
         
-        this.tsize = 64;
-        this.setFrames(0, 2); //0,2
+        this.tsize = 64;        
         
         init();
     }
@@ -63,7 +67,7 @@ public class Player extends Animated {
     @Override
     public void init(){
 
-        this.setFrames(0, 2); //0,2
+        this.setFrames(0, 3);
         this.frameSpeed = 10; //quanto maior, mais lento
     }
     
@@ -94,13 +98,11 @@ public class Player extends Animated {
         left.setXY(this.x+16, this.y+16);
         right.setXY(this.x, this.y+16);
         
-        sc.update();
-        
+        sc.update();        
         this.checkLimits();
         this.changeDirection();
         this.Animation();
-        
-        //System.out.println("vx: "+vx);
+
     }
     
     @Override
@@ -108,7 +110,7 @@ public class Player extends Animated {
         
         if(vx > 0){
             
-            this.setFrames(3, 9); //3,9
+            this.setFrames(3, 9);
             this.direction = 1;
             
         } else if(vx < 0){
@@ -120,9 +122,9 @@ public class Player extends Animated {
         if(vx == 0){
             
             if(direction > 0){
-                this.setFrames(0, 0); //0,2
+                this.setFrames(0, 3);
             } else {
-                this.setFrames(7, 0);
+                this.setFrames(34, 36);
             }
         }
         
@@ -160,6 +162,41 @@ public class Player extends Animated {
         GamePanel.amp.onNotify("SHOT");
          
     }
+    
+    public void hurt(){
+        lifePoints--;
+        this.y -= 5;
+        if(direction == 1){
+            vy = -10;
+            vx = -5;
+        } else if(direction == -1){
+            vy = -10;
+            vx = +5;
+        }
+    }
+    
+    public void jump(String stateID){
+        if(stateID.equals("STANDING_STATE")){
+            vy -= jumpspeed;            
+        } else if(stateID.equals("WALKING_STATE")){
+            vy -= (int)(jumpspeed*1.1);
+        }
+    }
+    
+    public void moveLeft(){
+        accX = -acc0;
+    }
+    
+    public void moveRight(){
+        accX = +acc0;
+    }
+    
+    public void flyLeft(){
+        vx = -speed;
+    }
+    public void flyRight(){
+        vx = +speed;
+    }
 
     @Override
     public Rectangle getBounds(){
@@ -179,6 +216,11 @@ public class Player extends Animated {
     }
     
     @Override
+    public Image getAnimatedImage(){
+        return frameSS;        
+    }
+    
+    @Override
     public void draw(Graphics g){
         //g.setColor(Color.red);        
         //g.fillRect(this.getBounds().x, this.getBounds().y, this.getBounds().width, this.getBounds().height);
@@ -187,8 +229,7 @@ public class Player extends Animated {
         
         //g.drawRect(this.getGhostBounds().x, this.getGhostBounds().y, 32, 32);
         
-        //g.drawImage(this.getAnimatedImage(), this.x, this.y, null);
-        //g.drawImage(ss.crop2(64*frameNumber, 0, 64, 64), this.x, this.y, null);
+        //g.drawImage(this.getAnimatedImage(), this.x, this.y, null);        
         
         g.drawImage(this.getImage(petroleiro), this.x, this.y-32, null);        
         
@@ -199,7 +240,10 @@ public class Player extends Animated {
     @Override
     public void Animation(){
         
-        frameSS = ss.crop2(tsize*frameNumber, 0, tsize, tsize);
+        //frameSS = ss.crop2(tsize*frameNumber, 0, tsize, tsize);
+        //System.out.println(tsize+"*"+frameNumber+" "+tsize+" "+tsize);
+        //frameSS = ss.crop3(frameNumber, 19);
+        frameSS = ss.crop4(frameNumber, 19, 64, 64);
         
         if(counterSS % frameSpeed == 0){
             if(frameNumber < endFrame){

@@ -42,8 +42,8 @@ public class Score implements Observer {
         }
     }
     
-    private void reset(){
-        this.points = 0;
+    public void reset(){
+        Score.points = 0;
     }
 
     public int getPoints() {
@@ -51,17 +51,17 @@ public class Score implements Observer {
     }
 
     public void setPoints(int points){
-        this.points = points;
+        Score.points = points;
     }
     
     public void addPoints(int points){
-        this.points += points;
+        Score.points += points;
     }
     
     public void removePoints(int points){
-        this.points -= points;
-        if(this.points < 0)
-            this.points = 0;
+        Score.points -= points;
+        if(Score.points < 0)
+            Score.points = 0;
     }
     
     public void draw(Graphics g){
@@ -76,8 +76,9 @@ public class Score implements Observer {
     public void onNotify(String s) {
         for(int i = 0; i < events.length; i++){
             if(events[i] != null){
-                if(events[i].equals(s))
+                if(events[i].equals(s)){
                     this.addPoints(values[i]);
+                }
             }
         }
     }

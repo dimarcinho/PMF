@@ -7,8 +7,9 @@ package playerstates;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
+import observerpattern.Observer;
 
-public class PlayerStateManager {
+public class PlayerStateManager implements Observer {
  
     public LinkedList<PlayerState> states;
     
@@ -40,6 +41,15 @@ public class PlayerStateManager {
     
     public PlayerState getState(){
         return this.states.getLast();
+    }
+
+    @Override
+    public void onNotify(String s) {
+        if(s.equals("PLAYER_HURT")){
+            //criar estado para HURT
+            states.peek().p.hurt();
+        }
+        
     }
             
 }

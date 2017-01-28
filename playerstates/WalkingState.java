@@ -16,7 +16,9 @@ public class WalkingState extends PlayerState {
     
     public WalkingState(Player p, PlayerStateManager psm){
         super(p, psm);        
-        init();        
+        init();
+
+        this.id = "WALKING_STATE";
     }
 
 
@@ -59,6 +61,8 @@ public class WalkingState extends PlayerState {
         p.y += p.vy;
         
         p.checkLimits();
+        p.Animation();
+        p.changeDirection();
         p.sc.update();
         
         if(p.vx == 0 && p.vy == 0)
@@ -78,20 +82,19 @@ public class WalkingState extends PlayerState {
         int key = e.getKeyCode();
         
         if(key == KeyEvent.VK_UP){
-
-            p.vy -= (int)(p.jumpspeed*1.1);
-            System.out.println("UP!");
+            
+            p.jump(id);
             this.psm.setState(new JumpingState(this.p, this.psm));
             
         } else if(key == KeyEvent.VK_DOWN) {            
                        
         } else if(key == KeyEvent.VK_LEFT) { 
             
-            p.accX = -p.acc0;            
+            p.moveLeft();
 
         } else if(key == KeyEvent.VK_RIGHT){
 
-            p.accX = +p.acc0;            
+            p.moveRight();
 
         } 
         
