@@ -12,7 +12,9 @@ public class StandingState extends PlayerState {
     
     public StandingState(Player p, PlayerStateManager psm){
         super(p, psm);        
-        init();    
+        init();
+        
+        this.id = "STANDING_STATE";
     }
     
     @Override

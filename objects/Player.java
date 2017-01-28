@@ -29,8 +29,8 @@ public class Player extends Animated {
     
     public Player(int x, int y){
         
-        //this.ss = new SpriteSheet(i.load("/res/img/petroleiro_teste_spritesheet.png"));
-        this.ss = new SpriteSheet(i.load("/res/img/petroleiro_cartoon_color2.png"));
+        this.ss = new SpriteSheet(i.load("/res/img/petroleiro_teste_spritesheet.png"));
+        //this.ss = new SpriteSheet(i.load("/res/img/petroleiro_cartoon_color2.png"));
         
         this.x = x;
         this.y = y;
@@ -55,7 +55,7 @@ public class Player extends Animated {
         sc = new ShotController();
         
         this.tsize = 64;
-        this.setFrames(0, 0); //0,2
+        this.setFrames(0, 2); //0,2
         
         init();
     }
@@ -150,23 +150,15 @@ public class Player extends Animated {
         if(vx > 0)
             lastXdir = false;
         if(vx < 0)
-            lastXdir = true;                   
-
-        
+            lastXdir = true;
     }
     
     public void shoot(){
         Shot shot = new Shot(x,y,lastXdir);
         sc.addShot(shot);
         
-        new Thread(new Runnable(){
-               @Override
-               public void run(){
-                   audioplayer = new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav");
-                   audioplayer.play();
-                   //GamePanel.amp.play2("SHOT");
-               }
-        }).start();
+        GamePanel.amp.onNotify("SHOT");
+         
     }
 
     @Override
@@ -199,6 +191,8 @@ public class Player extends Animated {
         //g.drawImage(ss.crop2(64*frameNumber, 0, 64, 64), this.x, this.y, null);
         
         g.drawImage(this.getImage(petroleiro), this.x, this.y-32, null);        
+        
+        //desenha os tiros ---> desacoplar!
         sc.draw(g);
     }
     

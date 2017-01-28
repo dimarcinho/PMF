@@ -63,7 +63,9 @@ public class Boss1LevelState extends GameState {
     public void init() {
         
         GamePanel.amp.stopAllSounds();        
+        //GamePanel.amp.play("/res/audio/music/Orbital Colossus.mp3");
         GamePanel.amp.loop("/res/audio/music/Orbital Colossus.mp3");
+        
  
     }
 
@@ -165,9 +167,10 @@ public class Boss1LevelState extends GameState {
         
         //Checa se o chefe está morto e avança para próxima fase
         if(boss.isDead){
-            //GamePanel.amp.stopAllSounds();
-            GamePanel.amp.fadeOutAllSounds();
-            gsm.states.push(new BeatGameState(gsm));
+            GamePanel.amp.stopAllSounds();
+            //GamePanel.amp.fadeOutAllSounds();
+            //gsm.states.push(new BeatGameState(gsm));
+            gsm.setState(new BeatGameState(gsm));
         }
         
     }

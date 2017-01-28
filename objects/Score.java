@@ -4,8 +4,9 @@ package objects;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import observerpattern.Observer;
 
-public class Score {
+public class Score implements Observer {
  
     private static int points;
     private String[] events;
@@ -69,6 +70,16 @@ public class Score {
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 16));
         g.drawString("Pontos: "+points, 60, 80);
+    }
+
+    @Override
+    public void onNotify(String s) {
+        for(int i = 0; i < events.length; i++){
+            if(events[i] != null){
+                if(events[i].equals(s))
+                    this.addPoints(values[i]);
+            }
+        }
     }
     
 }

@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 import javax.swing.ImageIcon;
 import objects.ParticleGenerator;
+import pmf.GamePanel;
 import pmf.PMF;
 
 /**
@@ -39,12 +40,15 @@ public class BeatGameState extends GameState {
         pg = new ParticleGenerator(0,0,0);
         
         rnd = new Random();
+        
+        init();
     }
 
     @Override
     public void init() {
 
-        
+        GamePanel.amp.stopAllSounds();
+        GamePanel.amp.loop("/res/audio/music/09_green_forest.mp3");
     }
 
     @Override

@@ -16,6 +16,7 @@ public abstract class PlayerState {
     
     public PlayerStateManager psm;
     public Player p;
+    public String id = "";
     
     public PlayerState(Player player, PlayerStateManager psm){
         this.p = player;
@@ -29,6 +30,6 @@ public abstract class PlayerState {
     public abstract void update();
     public abstract void draw(Graphics g);
     public abstract void keyPressed(KeyEvent e);
-    public abstract void keyReleased(KeyEvent e);
+    public abstract void keyReleased(KeyEvent e);    
     
 }

@@ -25,9 +25,7 @@ public class Level1State extends GameState implements Subject {
     public ItemController ic;
     
     private ArrayList<Observer> observers;
-    
-    //private static AudioPlayer bgMusic;
-        
+
     String background = "/res/img/background_sky.png";
     String bg1 = "/res/img/background_sea.png";
     
@@ -36,7 +34,7 @@ public class Level1State extends GameState implements Subject {
     public Level1State(GameStateManager gsm){
         super(gsm);
         
-        observers = new ArrayList<Observer>();
+        observers = new ArrayList<>();
         
         score = new Score();
         
@@ -84,9 +82,6 @@ public class Level1State extends GameState implements Subject {
         ic.addItem(new Item(18*map.tsize,11*map.tsize,0));
         ic.addItem(new Item(17*map.tsize,11*map.tsize,0));
         ic.addItem(new Item(16*map.tsize,11*map.tsize,0));
-
-
-        
         
         this.init();
     }
@@ -95,7 +90,7 @@ public class Level1State extends GameState implements Subject {
     public void init() {
                         
         GamePanel.amp.loop("/res/audio/music/level1-1.mp3");
-
+        
     }
 
     @Override
@@ -175,7 +170,7 @@ public class Level1State extends GameState implements Subject {
         
         //testando sons
         if(e.getKeyCode() == KeyEvent.VK_K){
-            GamePanel.amp.play2("JUMP");
+            GamePanel.amp.onNotify("JUMP");
         }
     }
 

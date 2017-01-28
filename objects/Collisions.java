@@ -5,12 +5,16 @@
 package objects;
 
 import audioEngine.AudioPlayer;
+import java.util.ArrayList;
+import observerpattern.Observer;
+import observerpattern.Subject;
 import playerstates.JumpingState;
 import playerstates.PlayerStateManager;
 import playerstates.StandingState;
+import pmf.GamePanel;
 
 
-public class Collisions {
+public class Collisions implements Subject {
     
     public PlayerStateManager psm;    
     public Player p;
@@ -23,8 +27,12 @@ public class Collisions {
     
     private AudioPlayer audioplayer;
     
+    public Score score;
+    
+    private ArrayList<Observer> observers = new ArrayList<>();
+    
     public Collisions(PlayerStateManager psm, MapTile map,
-                        EnemyController ec, ItemController ic){
+                        EnemyController ec, ItemController ic) {
         this.psm = psm;        
         this.map = map;
         this.p = psm.states.peek().p;
@@ -34,6 +42,12 @@ public class Collisions {
         p_gen = new ParticleGenerator(0, 0, 0);        
         
         collided = false;
+        
+        score = new Score();
+        
+        //adicionando Observers
+        this.addObserver(this.score);
+        this.addObserver(GamePanel.amp);
     }
     
     public void update(){
@@ -55,7 +69,10 @@ public class Collisions {
         
         if(map.getLogic(row0, col0) == 0 && map.getLogic(row0+1, col0) == 0){
             //checar aqui que se o estado for jumping, não fazer nada!!!!
-            psm.setState(new JumpingState(this.p, this.psm)); 
+            if(!psm.states.peek().id.equals("JUMPING_STATE")){
+                System.out.println("Caindo!");
+                psm.setState(new JumpingState(psm.states.peek().p, this.psm)); 
+            } 
         }
         
         if (p.vx > 0 && map.getTileBounds(row0, col0+1).intersects(p.getGhostBounds()) && map.getLogic(row0, col0+1) == 1){
@@ -82,11 +99,17 @@ public class Collisions {
             p.vy = 0;
             p.y = map.getTileBounds(row0+1, col0).y-32;
             //System.out.println("vy > 0");
-            psm.setState(new StandingState(psm.states.peek().p, this.psm));
+            
+            if(!psm.states.peek().id.equals("STANDING_STATE")){
+                psm.setState(new StandingState(psm.states.peek().p, this.psm));
+            }
         
         } else if(map.getTileBounds(row0+1, col0).intersects(p.getGhostBounds()) && map.getLogic(row0+1, col0) == 0){
-                   //checar aqui que se o estado for jumping, não fazer nada!!!!
-                   psm.setState(new JumpingState(psm.states.peek().p, this.psm)); 
+            
+                   if(!psm.states.peek().id.equals("JUMPING_STATE")){
+                       System.out.println("Encostando no chão!");
+                       psm.setState(new JumpingState(psm.states.peek().p, this.psm)); 
+                   }
                    
         }
         
@@ -100,10 +123,10 @@ public class Collisions {
                 //System.out.println("pegou item!");                
                 p_gen.addBasicParticles(ic.items.get(i).x,ic.items.get(i).y,50);
                 ic.removeItem(ic.items.get(i));
-                Score s = new Score();
-                s.notify("GET_BBL");
-                s = null;
                 
+                notify("GET_BBL");
+                
+                /*
                 new Thread(new Runnable(){
                            @Override
                            public void run(){
@@ -111,6 +134,8 @@ public class Collisions {
                                audioplayer.play();
                            }
                 }).start();
+                 * 
+                 */
                 
             }
             
@@ -144,10 +169,10 @@ public class Collisions {
                     //System.out.println(ec.enemies.get(i).x+","+ec.enemies.get(i).y);
                     ec.enemies.remove(i);
                     p.sc.shots.remove(j);
-                    Score s = new Score();
-                    s.notify("KILL_ENEMY");
-                    s = null;
                     
+                    notify("KILL_ENEMY");
+                    
+                    /*
                     new Thread(new Runnable(){
                            @Override
                            public void run(){
@@ -155,6 +180,8 @@ public class Collisions {
                                audioplayer.play();
                            }
                     }).start();
+                     * 
+                     */
                     
                     break;
                 } else if(p.sc.shots.get(j).x < 0 || p.sc.shots.get(j).x > map.col*map.tsize){
@@ -163,6 +190,26 @@ public class Collisions {
                 }
                 
             }
+        }
+    }
+
+    @Override
+    public void addObserver(Observer o) {
+        this.observers.add(o);
+    }
+
+    @Override
+    public void removeObserver(Observer o) {
+        if(o != null){
+            this.observers.remove(o);
+        }
+    }
+
+    @Override
+    public void notify(String s) {
+        
+        for(Observer o: observers){
+            o.onNotify(s);
         }
     }
     

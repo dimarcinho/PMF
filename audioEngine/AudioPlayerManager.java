@@ -11,6 +11,8 @@ public final class AudioPlayerManager implements Observer{
     private ArrayList<Thread> threads;
     private Hashtable<String, AudioPlayer> loaded;
     
+    private AudioPlayer ap;
+    
     public AudioPlayerManager(){
         audios = new ArrayList<>();
         threads = new ArrayList<>();
@@ -24,20 +26,29 @@ public final class AudioPlayerManager implements Observer{
         loaded.put("DEATH", new AudioPlayer("/res/audio/sfx/Death.wav"));
         loaded.put("SHOT", new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav"));
         
-        //na hora de utilizá-los, apenas copiar o respectivo e gerar a thread
+        audios.add(new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav"));
+
+    }
+    
+    public void play3(String s){
+        throw new UnsupportedOperationException("Utilizado apenas para testes");
         
-        new Thread(new Runnable(){
-               @Override
-               public void run(){                   
-                   //AudioPlayer sfx;
-                   //sfx = loaded.get("JUMP");                   
-                   loaded.get("JUMP").play();
-                   //sfx.play();
-                   //AudioPlayer audioplayer = new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav");
-                   //audioplayer.play();
-               }
-        }).start();
         
+        //ap = new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav");               
+        
+        //AudioPlayer audio2 = ap;
+        //audio2.play();
+        //ap = loaded.get(s);
+        
+        //ap = audios.get(0);        
+        //ap.play();
+        
+        //audios.get(0).play();
+        
+        /*
+         * testes mostraram que criar o áudio diretametne é mais rápido que
+         * armazená-los na memória, o que é estranho ao meu ver.
+         */
     }
     
     public void addAudioPlayer(AudioPlayer sound){
@@ -51,37 +62,8 @@ public final class AudioPlayerManager implements Observer{
     public void stopAllSounds(){
         for(AudioPlayer ap : audios){
             ap.stop();
+            ap = null;
         }
-    }
-    
-    public void play2(final String s){
-        /*
-        threads.add(
-               new Thread(new Runnable(){
-                   @Override
-                   public void run(){
-                       loaded.get(s).play();
-                   }
-                })
-        );
-        threads.get(threads.size()-1).start();
-         * 
-         */
-        
-        
-        new Thread(new Runnable(){
-               @Override
-               public void run(){                   
-                   AudioPlayer sfx;
-                   sfx = loaded.get(s);                   
-                   //loaded.get(s).play();
-                   sfx.play();
-                   //AudioPlayer audioplayer = new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav");
-                   //audioplayer.play();
-               }
-        }).start();
-        
-        System.out.println("Playing: "+s);
     }
     
     public void play(String s){
@@ -109,6 +91,33 @@ public final class AudioPlayerManager implements Observer{
 
     @Override
     public void onNotify(String s) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        AudioPlayer x;
+        
+        switch(s){
+            case "SHOT":
+                x = new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav");
+                break;
+            case "JUMP":
+                x = new AudioPlayer("/res/audio/sfx/Jump7.wav");
+                break;
+            case "DEATH":
+                x = new AudioPlayer("/res/audio/sfx/Death.wav");
+                break;
+            case "GET_BBL":
+                x = new AudioPlayer("/res/audio/sfx/Pickup_Coin.wav");
+                break;
+            case "KILL_ENEMY":
+                x = new AudioPlayer("/res/audio/sfx/Hit_Hurt6.wav");
+                break;
+            default:
+                throw new IllegalArgumentException("Áudio criado não suportado.");
+        }
+        
+        if(x != null){
+            x.play();
+        }
+        
+        
     }
 }

@@ -5,32 +5,21 @@
 package playerstates;
 
 import audioEngine.AudioPlayer;
-import audioEngine.SoundManager;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import objects.Player;
 
 public class JumpingState extends PlayerState {
     
-    private AudioPlayer audioplayer;
-    
     public JumpingState(Player p, PlayerStateManager psm){
         super(p, psm);        
         init();
+        
+        this.id = "JUMPING_STATE";
     }
     
     @Override
     public void init() {
-        /*
-        new Thread(new Runnable(){
-                   @Override
-                   public void run(){
-                       audioplayer = new AudioPlayer("/res/audio/sfx/Pickup_Coin.wav", 1);
-                       audioplayer.play();
-                   }
-        }).start();
-         * 
-         */
     
     }
     

@@ -41,7 +41,6 @@ public class AudioPlayer implements Observer {
     
     public void setLowVol(float low){
         FloatControl gain = (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
-        //float dB = (float)this.getVol()-1f;
         gain.setValue(low);        
     }
     
