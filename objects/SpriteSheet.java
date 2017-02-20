@@ -35,6 +35,10 @@ public class SpriteSheet {
         int col = frame % num_col;
         int row = (frame-col)/num_col;
         
-        return sheet.getSubimage(h*col, w*row, w, h);
+        //int row = (int)(frame/num_col);
+        //int col = (int)(frame % num_col);
+        
+        
+        return sheet.getSubimage(w*col, h*row, w, h);
     }
 }

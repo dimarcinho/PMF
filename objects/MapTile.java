@@ -38,20 +38,15 @@ public class MapTile {
         this.tile = new int[row*col];
         this.logicGrid = new int[row*col];
         
-        //System.out.println("row, col:"+row+", "+col);
-        
         this.tsize = tsize;
                 
         ss = new SpriteSheet(i.load(tiles));
         
         //popula o tiles em forma de teste
-        //this.populaMapa();
-        
-        //System.out.println("tile[] lenght: "+tile.length);
+        //this.populaMapa();        
         
         this.loadImageLevel(mapfile);
-        this.createLogic();        
-            
+        this.createLogic();
         
     }
     
@@ -99,9 +94,6 @@ public class MapTile {
         for(int i = 0; i < row; i++){
             
             for(int j = 0; j < col; j++){
-                
-                //System.out.println("i, j:"+i+", "+j);
-                //System.out.println("i*j:"+i*j);
                 
                 int pixel = image.getRGB(j, i);                
                 int red = (pixel >> 16) & 0xff;

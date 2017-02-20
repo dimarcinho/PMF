@@ -50,9 +50,6 @@ public abstract class Animated {
         } else {
             counterSS++;
         }
-        
-        if(vx == 0 && vy == 0)
-            counterSS--;
     }
     
     public Rectangle getBounds(){

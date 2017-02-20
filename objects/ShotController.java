@@ -11,7 +11,7 @@ public class ShotController {
     
     public ShotController(){
         
-        shots = new LinkedList<Shot>();
+        shots = new LinkedList<>();
         
     }
     

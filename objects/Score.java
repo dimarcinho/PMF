@@ -6,7 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import observerpattern.Observer;
 
-public class Score implements Observer {
+public class Score implements Observer { 
  
     private static int points;
     private String[] events;
@@ -32,15 +32,8 @@ public class Score implements Observer {
         values[1] = 10;
     }
     
-    public void notify(String event){
-        
-        for(int i = 0; i < events.length; i++){
-            if(events[i] != null){
-                if(events[i].equals(event))
-                    this.addPoints(values[i]);
-            }
-        }
-    }
+    //a ideia é criar um método para preencher os vetores;
+    private void setEventPoint(String s, int i){}
     
     public void reset(){
         Score.points = 0;
@@ -51,7 +44,7 @@ public class Score implements Observer {
     }
 
     public void setPoints(int points){
-        Score.points = points;
+        Score.points = points;        
     }
     
     public void addPoints(int points){

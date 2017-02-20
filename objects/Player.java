@@ -5,7 +5,6 @@ import audioEngine.AudioPlayer;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 import pmf.GamePanel;
 
@@ -16,29 +15,33 @@ public class Player extends Animated {
     public int acc0, accX, jumpspeed, g;
     
     public int lifes, lifePoints;
+    public boolean isInvincible;
+    public int countInvincible = 0, InvicibleTime = 120;
     
     public Point left, right, top, bottom;
     public ShotController sc;
-    
+
     public boolean check; //para checar colisões
-    public boolean lastXdir = false;
+    public boolean lastXdir = false; //false -> direita
     
     public Rectangle ghost;
     
     String petroleiro = "/res/img/petroleiro_piskel.png";
     
-    private AudioPlayer audioplayer;
+    public double tick = 0;
     
     public Player(int x, int y){
         
-        //this.ss = new SpriteSheet(i.load("/res/img/petroleiro_teste_spritesheet.png"));
-        this.ss = new SpriteSheet(i.load("/res/img/petroleiro_cartoon_color2.png"));
+        //this.ss = new SpriteSheet(i.load("/res/img/petroleiro_cartoon_color2.png"));
+        //this.ss = new SpriteSheet(i.load("/res/img/saul_cerejinha_sprite.png"));
+        this.ss = new SpriteSheet(i.load("/res/img/petroleiro_simples.png"));
         
         this.x = x;
         this.y = y;
         
         this.lifes = 3;
-        this.lifePoints = 5;
+        
+        this.lifePoints = 4;
         
         this.top = new Point(this.x+16, this.y);
         this.bottom = new Point(this.x+16, this.y+32);
@@ -67,12 +70,11 @@ public class Player extends Animated {
     @Override
     public void init(){
 
-        this.setFrames(0, 3);
-        this.frameSpeed = 10; //quanto maior, mais lento
     }
     
     public void reset(){
-        
+        lifePoints = 4;
+        this.isInvincible = false;
         this.x = 100;
         this.y = 100;
         vx = 0;
@@ -80,7 +82,8 @@ public class Player extends Animated {
         accX = 0;
         sc.removeAll();
         
-        audioplayer = new AudioPlayer("/res/audio/sfx/Death.wav");
+        //DESACOPLAR!
+        AudioPlayer audioplayer = new AudioPlayer("/res/audio/sfx/Death.wav");
         audioplayer.play();
         int i = 0;
         while(i < 100000){
@@ -93,12 +96,15 @@ public class Player extends Animated {
     @Override
     public void update(){
         
+
+        
         top.setXY(this.x+16, y);
         bottom.setXY(this.x+16, this.y+32);
         left.setXY(this.x+16, this.y+16);
         right.setXY(this.x, this.y+16);
         
-        sc.update();        
+        sc.update();
+        
         this.checkLimits();
         this.changeDirection();
         this.Animation();
@@ -108,30 +114,17 @@ public class Player extends Animated {
     @Override
     public void changeDirection(){
         
-        if(vx > 0){
-            
-            this.setFrames(3, 9);
-            this.direction = 1;
-            
-        } else if(vx < 0){
-            
-            this.setFrames(5, 2);
-            this.direction = -1;
+        if(vx > 0){            
+            this.direction = 1; //direita            
+        } else if(vx < 0){            
+            this.direction = -1; //esquerda
         }
-        
-        if(vx == 0){
-            
-            if(direction > 0){
-                this.setFrames(0, 3);
-            } else {
-                this.setFrames(34, 36);
-            }
-        }
-        
 
     }
     
     public void checkLimits(){
+        
+        this.invincibleCheck(0);
 
         if (vy > vymax){
             vy = vymax; //velocidade terminal
@@ -149,22 +142,26 @@ public class Player extends Animated {
             y = 1500;
             this.reset();
         }
-        if(vx > 0)
+        if(vx > 0){
             lastXdir = false;
-        if(vx < 0)
+        } else if(vx < 0){
             lastXdir = true;
+        }
     }
     
     public void shoot(){
         Shot shot = new Shot(x,y,lastXdir);
         sc.addShot(shot);
         
+        //DESACLOPAR !!!!!!
         GamePanel.amp.onNotify("SHOT");
          
     }
     
     public void hurt(){
         lifePoints--;
+        this.isInvincible = true;
+        
         this.y -= 5;
         if(direction == 1){
             vy = -10;
@@ -172,7 +169,18 @@ public class Player extends Animated {
         } else if(direction == -1){
             vy = -10;
             vx = +5;
-        }
+        }        
+        //setFrames(13,0);
+    }
+    
+    public void invincibleCheck(int maxtime){
+        if(isInvincible){            
+            countInvincible++;
+            if(countInvincible > (this.InvicibleTime + maxtime)){
+                this.isInvincible = false;
+                countInvincible = 0;
+            }
+        }        
     }
     
     public void jump(String stateID){
@@ -201,7 +209,6 @@ public class Player extends Animated {
     @Override
     public Rectangle getBounds(){
         Rectangle r = new Rectangle(this.x, this.y-32, 32, 64);
-        //Rectangle r = new Rectangle(this.x, this.y, 64, 64);
         return r;    
     }
     
@@ -221,17 +228,19 @@ public class Player extends Animated {
     }
     
     @Override
-    public void draw(Graphics g){
-        //g.setColor(Color.red);        
-        //g.fillRect(this.getBounds().x, this.getBounds().y, this.getBounds().width, this.getBounds().height);
-        //g.setColor(Color.black);
-        //g.drawString("x: "+this.x+", y: "+this.y, 300, 400);
+    public void draw(Graphics g){      
         
-        //g.drawRect(this.getGhostBounds().x, this.getGhostBounds().y, 32, 32);
+        if(isInvincible){
+            //setFrames(13,0);
+            if(countInvincible % 4 == 0){
+                //g.drawImage(this.getImage(petroleiro), this.x, this.y-32, null);
+                g.drawImage(this.getAnimatedImage(), this.x, this.y-32, null); 
+            }
+        } else {
+            g.drawImage(this.getAnimatedImage(), this.x, this.y-32, null);        
+        }
         
-        //g.drawImage(this.getAnimatedImage(), this.x, this.y, null);        
         
-        g.drawImage(this.getImage(petroleiro), this.x, this.y-32, null);        
         
         //desenha os tiros ---> desacoplar!
         sc.draw(g);
@@ -239,11 +248,8 @@ public class Player extends Animated {
     
     @Override
     public void Animation(){
-        
-        //frameSS = ss.crop2(tsize*frameNumber, 0, tsize, tsize);
-        //System.out.println(tsize+"*"+frameNumber+" "+tsize+" "+tsize);
-        //frameSS = ss.crop3(frameNumber, 19);
-        frameSS = ss.crop4(frameNumber, 19, 64, 64);
+
+        frameSS = ss.crop4(frameNumber, 7, 32, 64);
         
         if(counterSS % frameSpeed == 0){
             if(frameNumber < endFrame){
@@ -253,21 +259,11 @@ public class Player extends Animated {
             }   
         }
         
-        if(counterSS > 20*frameSpeed){
+        if(counterSS >= 20*frameSpeed){
             counterSS = 0;
-        } else {
-            counterSS++;
+        } else if(counterSS < 20*frameSpeed) {
+            this.counterSS++;
         }
-        
-        if(vx == 0 && vy == 0)
-            counterSS--;
-    }
-    
-    public void keyPressed(KeyEvent e){
-
-    }
-    
-    public void keyReleased(KeyEvent e){
 
     }
 }

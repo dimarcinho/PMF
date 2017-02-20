@@ -38,10 +38,7 @@ public class Camera {
         
         //posicionando a câmera em relação ao player
         this.x = -p.x + width/2;
-        this.y = -p.y + height/2;
-        
-        //this.checkLimits();
-        this.update(p);             
+        this.y = -p.y + height/2;     
         
     }
     
@@ -74,18 +71,8 @@ public class Camera {
     
     public void draw(Graphics g){
 
-        g.translate(offsetX, offsetY);
-        /*
-        System.out.println("Camera(x,y): ("+this.x+","+this.y+")");
-        System.out.println("MaxCamera(x,y): ("+this.maxX+","+this.maxY+")");
-        System.out.println("Player(x,y): ("+p.x+","+p.y+")");
-        System.out.println("Translation: ("+offsetX+","+offsetY+")");
-         * 
-         */
-        
+        g.translate(offsetX, offsetY);       
         map.draw(g);
-        
-        //g.translate(-offsetX, -offsetY);
         
     }
     

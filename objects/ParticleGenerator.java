@@ -23,7 +23,7 @@ public class ParticleGenerator {
         this.y = y;        
         this.n = n;
         
-        particles = new LinkedList<Particle>();
+        particles = new LinkedList<>();
                 
     }
     
@@ -45,7 +45,7 @@ public class ParticleGenerator {
             int vx = rnd.nextInt(16)-8;
             int vy = rnd.nextInt(16)-8;
             
-            while(vx == 0 && vy == 0){
+            while(vx == 0 || vy == 0){
                 vx = rnd.nextInt(16)-8;
                 vy = rnd.nextInt(16)-8; 
             }
@@ -54,12 +54,17 @@ public class ParticleGenerator {
             int life = rnd.nextInt(10)+10;            
             
             particles.push(new Particle(x, y, vx, vy, size, life, Color.red));
+            
+            //testes
+            //Color c = new Color(rndAB(1,254), rndAB(1,254), rndAB(1,254), rndAB(1,254));            
+            //Color c = new Color(0.7f,0.2f,0.3f, 0.1f);
+            //particles.push(new Particle(x, y, vx, vy, size, life*100, c));
                     
         }
         
     }
     
-    public int rndAB(int a, int b){                
+    private int rndAB(int a, int b){                
         int rndAB;
         Random rnd = new Random();
         rndAB = a+rnd.nextInt(b-a+1);

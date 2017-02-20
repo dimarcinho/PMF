@@ -4,13 +4,13 @@
  */
 package objects;
 
-import audioEngine.AudioPlayer;
 import java.util.ArrayList;
 import observerpattern.Observer;
 import observerpattern.Subject;
 import playerstates.JumpingState;
 import playerstates.PlayerStateManager;
 import playerstates.StandingState;
+import playerstates.WalkingState;
 import pmf.GamePanel;
 
 
@@ -23,11 +23,7 @@ public class Collisions implements Subject {
     public ItemController ic;
     public ParticleGenerator p_gen;
     
-    public boolean collided;
-    
-    private AudioPlayer audioplayer;
-    
-    public Score score;
+    public boolean collided;    
     
     private ArrayList<Observer> observers = new ArrayList<>();
     
@@ -41,14 +37,13 @@ public class Collisions implements Subject {
         
         p_gen = new ParticleGenerator(0, 0, 0);        
         
-        collided = false;
+        collided = false;        
         
-        score = new Score();
-        
-        //adicionando Observers
-        this.addObserver(this.score);
+        //adicionando Observers        
+        this.addObserver(new Score());
         this.addObserver(GamePanel.amp);
         this.addObserver(psm);
+        
     }
     
     public void update(){
@@ -69,7 +64,7 @@ public class Collisions implements Subject {
         
         
         if(map.getLogic(row0, col0) == 0 && map.getLogic(row0+1, col0) == 0){
-            //checar aqui que se o estado for jumping, não fazer nada!!!!
+            //se o estado for jumping, não fazer nada!!!! (i.e., mantem o estado jumping)
             if(!psm.states.peek().id.equals("JUMPING_STATE")){
                 System.out.println("Caindo!");
                 psm.setState(new JumpingState(psm.states.peek().p, this.psm)); 
@@ -80,14 +75,12 @@ public class Collisions implements Subject {
             
             p.vx = 0;
             p.x = map.getTileBounds(row0, col0+1).x-32;
-                //System.out.println("vx > 0");
+
         }
         
-        if (p.vx < 0 && map.getTileBounds(row0, col0-1).intersects(p.getGhostBounds()) && map.getLogic(row0, col0-1) == 1){
-            
+        if (p.vx < 0 && map.getTileBounds(row0, col0-1).intersects(p.getGhostBounds()) && map.getLogic(row0, col0-1) == 1){            
             p.vx = 0;
             p.x = map.getTileBounds(row0, col0).x;
-                //System.out.println("vx > 0");
         }
         
         if (p.vy < 0 && map.getTileBounds(row0, col0).intersects(p.getGhostBounds()) && map.getLogic(row0, col0) == 1){
@@ -101,14 +94,19 @@ public class Collisions implements Subject {
             p.y = map.getTileBounds(row0+1, col0).y-32;
             //System.out.println("vy > 0");
             
-            if(!psm.states.peek().id.equals("STANDING_STATE")){
+            if(!psm.states.peek().id.equals("STANDING_STATE") || !psm.states.peek().id.equals("WALKING_STATE")){
+                System.out.println("Encostando no chão!");
+                
+                //psm.setState(new WalkingState(psm.states.peek().p, this.psm));
+                
                 psm.setState(new StandingState(psm.states.peek().p, this.psm));
-            }
+                
+            }   
         
         } else if(map.getTileBounds(row0+1, col0).intersects(p.getGhostBounds()) && map.getLogic(row0+1, col0) == 0){
             
                    if(!psm.states.peek().id.equals("JUMPING_STATE")){
-                       System.out.println("Encostando no chão!");
+                       System.out.println("Ainda caindo!");
                        psm.setState(new JumpingState(psm.states.peek().p, this.psm)); 
                    }
                    
@@ -127,17 +125,6 @@ public class Collisions implements Subject {
                 
                 notify("GET_BBL");
                 
-                /*
-                new Thread(new Runnable(){
-                           @Override
-                           public void run(){
-                               audioplayer = new AudioPlayer("/res/audio/sfx/Pickup_Coin.wav");
-                               audioplayer.play();
-                           }
-                }).start();
-                 * 
-                 */
-                
             }
             
         }
@@ -148,10 +135,10 @@ public class Collisions implements Subject {
         
         for(int i = 0; i < ec.enemies.size(); i++){
             
-            if(this.p.getBounds().intersects(ec.enemies.get(i).getBounds())){
+            if(this.p.getBounds().intersects(ec.enemies.get(i).getBounds()) 
+                    && this.p.isInvincible == false){
                 System.out.println("Colisão com inimigo detectada!!!!");
-                notify("PLAYER_HURT");
-                //this.p.reset();
+                notify("PLAYER_HURT");                
             }
             
         }
@@ -167,25 +154,14 @@ public class Collisions implements Subject {
                 //colisão do tiro com inimigo
                 
                 if(ec.enemies.get(i).getBounds().intersects(p.sc.shots.get(j).getBounds())){
-                    p_gen.addBasicParticles(ec.enemies.get(i).x, ec.enemies.get(i).y, 150);      
-                    //System.out.println(ec.enemies.get(i).x+","+ec.enemies.get(i).y);
+                    
+                    p_gen.addBasicParticles(ec.enemies.get(i).x, ec.enemies.get(i).y, 128);      
                     ec.enemies.remove(i);
                     p.sc.shots.remove(j);
                     
                     notify("KILL_ENEMY");
-                    
-                    /*
-                    new Thread(new Runnable(){
-                           @Override
-                           public void run(){
-                               audioplayer = new AudioPlayer("/res/audio/sfx/Hit_Hurt6.wav");
-                               audioplayer.play();
-                           }
-                    }).start();
-                     * 
-                     */
-                    
                     break;
+                    
                 } else if(p.sc.shots.get(j).x < 0 || p.sc.shots.get(j).x > map.col*map.tsize){
                     //se o objeto sair dos limites do mapa, ele é destruído
                     p.sc.shots.remove(j);

@@ -21,7 +21,7 @@ public class Shot extends Animated  {
         this.dir = dir;
       
         
-        speed = 10;
+        speed = 8;
         
         if(dir)
             vx = -speed;
@@ -36,11 +36,14 @@ public class Shot extends Animated  {
     public void init(){        
                 
         this.ss = new SpriteSheet(i.load("/res/img/Shot Calculator.png"));
+        //this.ss = new SpriteSheet(i.load("/res/img/cereja_animated_shot.png"));
         
         this.startFrame = 0;
         this.endFrame = startFrame + 3;
         this.frameNumber = startFrame;
-        this.frameSpeed = 10; //quanto maior, mais lento  
+        this.frameSpeed = 10; //quanto maior, mais lento
+        
+        //this.setFrames(0, 0);
         
     }
     
