@@ -1,7 +1,7 @@
 
 package gamestates;
 
-import audioEngine.*;
+import audioEngine.AudioPlayerManager;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -20,13 +20,17 @@ public class Level1State extends GameState implements Subject {
     public MapTile map;
     public Camera camera;
     public Score score;
+    public LifePoints lifepoints;
     public Collisions collisions;
     public EnemyController ec;
     public ItemController ic;
     
+    
     private ArrayList<Observer> observers;
+    private AudioPlayerManager APM = new AudioPlayerManager();
 
-    String background = "/res/img/background_pink.png";
+    String background = "/res/img/background_sky.png";
+    //String background = "/res/img/background_pink.png";
     String bg1 = "/res/img/background_sea.png";
     
     public Item greenFlag;
@@ -36,10 +40,12 @@ public class Level1State extends GameState implements Subject {
         
         observers = new ArrayList<>();
         
-        score = new Score();
+        score = new Score();        
         
         //player = new Player(6000, 10);
-        player = new Player(100, 10);
+        player = new Player(100, 250);
+        
+        lifepoints = new LifePoints(player);
         
         map = new MapTile(32, "/res/img/levelteste.png");
         
@@ -58,7 +64,6 @@ public class Level1State extends GameState implements Subject {
             for(int j = 0; j < map.col; j++){                
                 if(map.getTile(i, j) == 5){
                     ec.addEnemy(new EnemyA(map.tsize*j, map.tsize*i));
-                    //ec.addEnemy(new SDVEnemy(j*map.tsize, i*map.tsize));
                 }
             }
         }
@@ -88,6 +93,8 @@ public class Level1State extends GameState implements Subject {
 
     @Override
     public void init() {
+        
+        this.addObserver(APM);
                         
         GamePanel.amp.loop("/res/audio/music/level1-1.mp3");
         
@@ -115,13 +122,19 @@ public class Level1State extends GameState implements Subject {
         ec.update();
         ic.update();
         collisions.update();
-        //desenvolver metodologia para morte em buracos
-        if(player.y > 1220)
-            player.reset();
+        lifepoints.update(psm.states.peek().p);
         camera.update(psm.states.peek().p);
         
+        //desenvolver metodologia para morte em buracos
+        //usar Zones na classe collisions!
+        if(player.y > 1220 || player.lifePoints == 0){
+            notify("DEATH");
+            score.reset();
+            GamePanel.amp.stopAllSounds();
+            gsm.states.push(new Level1State(this.gsm));
+        }
+        
         if(player.getBounds().intersects(greenFlag.getBounds())){
-            //bgMusic.close();
             GamePanel.amp.stopAllSounds();
             gsm.states.push(new Boss1LevelState(this.gsm));
         }
@@ -146,6 +159,7 @@ public class Level1State extends GameState implements Subject {
         
         g.translate(-camera.offsetX, -camera.offsetY);
         score.draw(g);
+        lifepoints.draw(g);
     }
     
     public Image getBackgroundImage(String bg){
@@ -163,16 +177,6 @@ public class Level1State extends GameState implements Subject {
         
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
             System.exit(0);
-        }
-        //testando stop all sounds
-        if(e.getKeyCode() == KeyEvent.VK_ENTER){
-            //implementar pra testar
-            GamePanel.amp.stopAllSounds();
-        }
-        
-        //testando sons
-        if(e.getKeyCode() == KeyEvent.VK_K){
-            GamePanel.amp.onNotify("JUMP");
         }
     }
 

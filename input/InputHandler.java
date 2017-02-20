@@ -3,8 +3,12 @@ package input;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 public class InputHandler implements KeyListener {
+    
+    private ArrayList<Integer> isPressed;
+    //private ArrayList<Integer> isDown;
     
     private Command btnUP;
     private Command btnDown;
@@ -13,8 +17,16 @@ public class InputHandler implements KeyListener {
     
     public InputHandler(){
         
+        isPressed = new ArrayList<>();
+        
+        
+        //Command Pattern em teste de implementação
         btnUP = new JumpCommand();
         
+    }
+    
+    public boolean isDown(int key){
+        return isPressed.contains(key);
     }
 
     @Override
@@ -22,14 +34,23 @@ public class InputHandler implements KeyListener {
         
         int key = e.getKeyCode();
         
-        if(key == KeyEvent.VK_UP){
+        if(!isDown(key)){
+            isPressed.add(key);
+        }        
+                
+        if(isDown(KeyEvent.VK_UP)){
             btnUP.execute();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        int key = e.getKeyCode();
+        
+        if(isPressed.indexOf(key) != -1){
+            isPressed.remove(isPressed.indexOf(key));
+        }
     }
 
     @Override

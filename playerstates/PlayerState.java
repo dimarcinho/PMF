@@ -6,6 +6,7 @@ package playerstates;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import objects.Player;
 
 /**
@@ -17,6 +18,7 @@ public abstract class PlayerState {
     public PlayerStateManager psm;
     public Player p;
     public String id = "";
+    protected ArrayList<Integer> isPressed = new ArrayList<>();
     
     public PlayerState(Player player, PlayerStateManager psm){
         this.p = player;
@@ -30,6 +32,8 @@ public abstract class PlayerState {
     public abstract void update();
     public abstract void draw(Graphics g);
     public abstract void keyPressed(KeyEvent e);
-    public abstract void keyReleased(KeyEvent e);    
-    
+    public abstract void keyReleased(KeyEvent e);
+    protected boolean isDown(int key){
+        return isPressed.contains(key);
+    }
 }

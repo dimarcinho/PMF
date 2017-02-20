@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package playerstates;
 
 import java.awt.Graphics;
@@ -14,7 +11,7 @@ public class PlayerStateManager implements Observer {
     public LinkedList<PlayerState> states;
     
     public PlayerStateManager(){
-        states = new LinkedList<PlayerState>();   
+        states = new LinkedList<>();   
     }
     
     public void init(){}
@@ -32,6 +29,11 @@ public class PlayerStateManager implements Observer {
         states.peek().keyReleased(e);
     }
     
+    public void addState(PlayerState state){
+        states.push(state);
+        System.out.println(states.peek().toString());
+    }
+    
     public void setState(PlayerState state){
         if(!states.isEmpty())        
             states.pop();        
@@ -40,7 +42,7 @@ public class PlayerStateManager implements Observer {
     }
     
     public PlayerState getState(){
-        return this.states.getLast();
+        return this.states.getLast();        
     }
 
     @Override

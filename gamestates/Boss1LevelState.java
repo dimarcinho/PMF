@@ -86,9 +86,7 @@ public class Boss1LevelState extends GameState {
 
     @Override
     public void update() {
-        
-        //player.update();
-        //boss.update();
+
         psm.update();
         bsm.update();
         ec.update();

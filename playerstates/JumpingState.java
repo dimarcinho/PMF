@@ -4,12 +4,13 @@
  */
 package playerstates;
 
-import audioEngine.AudioPlayer;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import objects.Player;
 
 public class JumpingState extends PlayerState {
+    
+    private int currentXdir, lastXdir;
     
     public JumpingState(Player p, PlayerStateManager psm){
         super(p, psm);        
@@ -20,6 +21,14 @@ public class JumpingState extends PlayerState {
     
     @Override
     public void init() {
+        
+        currentXdir = p.direction;
+        if(p.direction == 1){
+            p.setFrames(4, 0);
+        } else {
+            p.setFrames(9, 0);
+        }        
+        lastXdir = currentXdir;
     
     }
     
@@ -44,9 +53,24 @@ public class JumpingState extends PlayerState {
         p.y += p.vy;
         
         p.checkLimits();
-        p.Animation();
+        
         p.changeDirection();
+        updateAnimation();
+        p.Animation();
+        
         p.sc.update();
+    }
+    
+    public void updateAnimation(){
+        currentXdir = p.direction;
+        if(currentXdir != lastXdir){
+            if(p.direction == 1){
+                p.setFrames(4, 0);
+            } else {
+                p.setFrames(9, 0);
+            }
+            lastXdir = currentXdir;
+        }
     }
 
     @Override
@@ -60,6 +84,32 @@ public class JumpingState extends PlayerState {
     public void keyPressed(KeyEvent e){
         int key = e.getKeyCode();
         
+        if(!isDown(key)){
+            isPressed.add(key);
+        }
+        
+        if(isDown(KeyEvent.VK_UP)){
+            
+        } 
+        if(isDown(KeyEvent.VK_DOWN)) {
+            
+        } 
+        if(isDown(KeyEvent.VK_LEFT)) {
+            
+            //p.vx = -p.speed;            
+            p.flyLeft();
+        } 
+        if(isDown(KeyEvent.VK_RIGHT)){
+
+            //p.vx = +p.speed;            
+            p.flyRight();
+        }
+        
+        if(isDown(KeyEvent.VK_SPACE)){
+            p.shoot();
+        }
+        
+        /*
         if(key == KeyEvent.VK_UP){
             
         } 
@@ -80,11 +130,16 @@ public class JumpingState extends PlayerState {
         if(key == KeyEvent.VK_SPACE){
             p.shoot();
         }
+        */
     }
     
     @Override
     public void keyReleased(KeyEvent e){
         int key = e.getKeyCode();
+        
+        if(isPressed.indexOf(key) != -1){
+            isPressed.remove(isPressed.indexOf(key));
+        }
         
         if(key == KeyEvent.VK_UP){
 

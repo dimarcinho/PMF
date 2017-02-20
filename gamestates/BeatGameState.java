@@ -139,6 +139,7 @@ public class BeatGameState extends GameState {
         int k = e.getKeyCode();
         
         if(k == KeyEvent.VK_ENTER){
+            GamePanel.amp.stopAllSounds();
             gsm.states.push(new MenuState(gsm));
         }        
         

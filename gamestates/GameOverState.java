@@ -72,15 +72,13 @@ public class GameOverState extends GameState {
     public void keyPressed(KeyEvent e) {
         int k = e.getKeyCode();
         
-        if(e.getKeyCode() == KeyEvent.VK_P){
-            gsm.states.pop();
+        if(k == KeyEvent.VK_ESCAPE){
+            System.exit(0);
         }
         
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
-        
-    }
+    public void keyReleased(KeyEvent e) {}
     
 }
