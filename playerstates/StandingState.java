@@ -13,10 +13,11 @@ public class StandingState extends PlayerState {
     private int currentXdir, lastXdir;
     
     public StandingState(Player p, PlayerStateManager psm){
-        super(p, psm);        
-        this.init();
-        
+        super(p, psm);
         this.id = "STANDING_STATE";
+        
+        this.init();
+
     }
     
     @Override
@@ -120,33 +121,7 @@ public class StandingState extends PlayerState {
         if(isDown(KeyEvent.VK_SPACE)){
             p.shoot();
         }        
-        
-        /*
-        if(key == KeyEvent.VK_UP){
 
-            p.jump(id);
-            //System.out.println("UP!");
-            this.psm.setState(new JumpingState(this.p, this.psm));                
-            
-        } 
-        if(key == KeyEvent.VK_DOWN) {           
-           //ducking...
-            
-        } 
-        if(key == KeyEvent.VK_LEFT) { 
-            p.moveLeft();
-            this.psm.setState(new WalkingState(this.p, this.psm));        
-
-        } 
-        if(key == KeyEvent.VK_RIGHT){
-            p.moveRight();
-            this.psm.setState(new WalkingState(this.p, this.psm)); 
-
-        }        
-        if(key == KeyEvent.VK_SPACE){
-            p.shoot();
-        }
-        */
     }
     
     @Override

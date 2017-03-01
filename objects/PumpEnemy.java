@@ -82,9 +82,6 @@ public class PumpEnemy extends Enemy {
         } else {
             counterSS++;
         }
-        
-        if(vx == 0 && vy == 0)
-            counterSS--;
     }
     
 }

@@ -2,15 +2,10 @@
 package objects;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.Random;
 
-/**
- *
- * @author Marcio
- */
 public class Particle {
     
     private int x, y, vx, vy, size, life;
@@ -26,18 +21,14 @@ public class Particle {
         this.color = color;
     }
     
-    public boolean isActive(){
-        if(life <= 0){
-            return false;
-        } else {
-            return true;
-        }
+    public boolean isActive(){        
+        return (life > 0);
     }
     
     public void update(){
         x += vx;
         y += vy;
-        life--;        
+        life--;
     }
     
     public void draw(Graphics g){

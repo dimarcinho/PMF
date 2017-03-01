@@ -11,24 +11,21 @@ import pmf.GamePanel;
 public class Player extends Animated {
     
     public int vxmax, vymax;    
-    public int xg, yx; // variáveis para checar a colisão
     public int acc0, accX, jumpspeed, g;
     
-    public int lifes, lifePoints;
-    public boolean isInvincible;
+    public static int lifes = 2;
+    
+    public int lifePoints;
+    public boolean isInvincible, isDead;
     public int countInvincible = 0, InvicibleTime = 120;
     
-    public Point left, right, top, bottom;
     public ShotController sc;
-
-    public boolean check; //para checar colisões
+    
     public boolean lastXdir = false; //false -> direita
     
     public Rectangle ghost;
     
     String petroleiro = "/res/img/petroleiro_piskel.png";
-    
-    public double tick = 0;
     
     public Player(int x, int y){
         
@@ -39,15 +36,8 @@ public class Player extends Animated {
         this.x = x;
         this.y = y;
         
-        this.lifes = 3;
-        
-        this.lifePoints = 4;
-        
-        this.top = new Point(this.x+16, this.y);
-        this.bottom = new Point(this.x+16, this.y+32);
-        this.left = new Point(this.x+16, this.y+16);        
-        this.right = new Point(this.x, this.y+16);
-        
+        this.lifePoints = 4; //4
+  
         this.ghost = new Rectangle(this.x,this.y,32,32);
         
         speed = 8;
@@ -69,14 +59,17 @@ public class Player extends Animated {
     
     @Override
     public void init(){
-
+        isDead = false;
     }
     
-    public void reset(){
+    public void reset(int x, int y){
+        this.x = x;
+        this.y = y;
+        
         lifePoints = 4;
         this.isInvincible = false;
-        this.x = 100;
-        this.y = 100;
+        this.isDead = false;
+        
         vx = 0;
         vy = 0;
         accX = 0;
@@ -95,13 +88,6 @@ public class Player extends Animated {
     
     @Override
     public void update(){
-        
-
-        
-        top.setXY(this.x+16, y);
-        bottom.setXY(this.x+16, this.y+32);
-        left.setXY(this.x+16, this.y+16);
-        right.setXY(this.x, this.y+16);
         
         sc.update();
         
@@ -130,23 +116,21 @@ public class Player extends Animated {
             vy = vymax; //velocidade terminal
         }
         
-        if (x < 0)
-            x = 0;
-        
-        if (x > 8000)
-            x = 8000;
-        
-        if (this.y < 1)
-            y = 0;
-        if (this.y > 1500){
-            y = 1500;
-            this.reset();
-        }
         if(vx > 0){
             lastXdir = false;
         } else if(vx < 0){
             lastXdir = true;
         }
+
+        
+    }
+    
+    public int getLifes(){
+        return lifes;
+    }
+    
+    public void setLifes(int lifes){
+        this.lifes = lifes;
     }
     
     public void shoot(){
@@ -159,10 +143,11 @@ public class Player extends Animated {
     }
     
     public void hurt(){
-        lifePoints--;
-        this.isInvincible = true;
         
-        this.y -= 5;
+        lifePoints--;
+        this.isInvincible = true;        
+        this.y -= 5; //para
+        
         if(direction == 1){
             vy = -10;
             vx = -5;
@@ -170,7 +155,18 @@ public class Player extends Animated {
             vy = -10;
             vx = +5;
         }        
-        //setFrames(13,0);
+        
+        if(lifePoints <= 0){
+            dead();
+        }
+    }
+    
+    public void dead(){
+        if(!isDead){
+            lifes--;
+            isDead = true;
+        }
+        System.out.println("Player morto! Lifes: "+lifes);
     }
     
     public void invincibleCheck(int maxtime){
@@ -213,7 +209,8 @@ public class Player extends Animated {
     }
     
     public Rectangle getGhostBounds(){
-        Rectangle r = new Rectangle(this.x+vx, this.y+vy-32, 32, 64);
+        Rectangle rp = getBounds();
+        Rectangle r = new Rectangle(rp.x+vx, rp.y+vy, rp.width, rp.height);        
         return r;    
     }
     
@@ -230,17 +227,13 @@ public class Player extends Animated {
     @Override
     public void draw(Graphics g){      
         
-        if(isInvincible){
-            //setFrames(13,0);
+        if(isInvincible){            
             if(countInvincible % 4 == 0){
-                //g.drawImage(this.getImage(petroleiro), this.x, this.y-32, null);
                 g.drawImage(this.getAnimatedImage(), this.x, this.y-32, null); 
             }
         } else {
             g.drawImage(this.getAnimatedImage(), this.x, this.y-32, null);        
         }
-        
-        
         
         //desenha os tiros ---> desacoplar!
         sc.draw(g);

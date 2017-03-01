@@ -49,7 +49,7 @@ public class Boss extends Animated {
         this.dir = true;
         this.lastXdir = dir;
         
-        this.lifepoints = 1;
+        this.lifepoints = 3;
         
         esc = new ShotController();
         
@@ -70,6 +70,10 @@ public class Boss extends Animated {
         EnemyShot es = new EnemyShot(this.x + 32, this.y+60, shotDir(), 0);
         esc.addShot(es);
         
+    }
+    
+    public void clearShots(){
+        esc.shots.clear();
     }
     
     public boolean shotDir(){
@@ -96,10 +100,7 @@ public class Boss extends Animated {
         }
         
         this.Animation();
-                
-        //System.out.println("x, y: "+x+", "+y);
-        //System.out.println("vx, vy: "+vx+", "+vy);
-        //System.out.println("Player(x, y): ("+p.x+", "+p.y+")");
+
     }
 
     @Override
@@ -187,8 +188,5 @@ public class Boss extends Animated {
         } else {
             counterSS++;
         }
-        
-        if(vx == 0 && vy == 0)
-            counterSS--;
     }
 }

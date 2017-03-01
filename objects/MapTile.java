@@ -27,10 +27,7 @@ public class MapTile {
     private SpriteSheet ss;
     
     public MapTile(int tsize, String mapfile){
-        
-        //this.row = row;
-        //this.col = col;
-        
+        this.tsize = tsize;
         this.mapfile = mapfile;
         
         this.updateRowCol(mapfile);
@@ -38,7 +35,7 @@ public class MapTile {
         this.tile = new int[row*col];
         this.logicGrid = new int[row*col];
         
-        this.tsize = tsize;
+        
                 
         ss = new SpriteSheet(i.load(tiles));
         
@@ -76,7 +73,7 @@ public class MapTile {
         this.col = width;
         this.row = height;
         
-        System.out.println("w, h:"+width+", "+height);
+        //System.out.println("w, h:"+width+", "+height);
         
     }
     
@@ -157,6 +154,48 @@ public class MapTile {
         
         for(int j = 0; j < this.col; j++){
             for(int i = 0; i < this.row; i++){
+                
+                int tile_num = this.getTile(i, j);
+                
+                switch(tile_num){
+                    case 0:
+                        g.setColor(Color.cyan);
+                        break;
+                    case 1:
+                        g.setColor(Color.orange);                        
+                        g.drawImage(ss.crop(1, 0, tsize, tsize), j*tsize, i*tsize, null);
+                        break;                        
+                    case 2:
+                        g.setColor(Color.DARK_GRAY);
+                        g.drawImage(ss.crop(1, 1, tsize, tsize), j*tsize, i*tsize, null);
+                        break;
+                    case 3:
+                        g.setColor(Color.white);
+                        break;
+                    case 4:                        
+                        g.drawImage(ss.crop(0, 1, tsize, tsize), j*tsize, i*tsize, null);
+                        break;
+                }
+                if(tile_num != 0 && tile_num != 3){
+                    //g.fillRect(j*this.tsize, i*this.tsize, this.tsize, this.tsize);
+                } else if(tile_num == 3 && this.getTile(i,j-2) == 3){                
+                    //desenha as nuvens
+                    g.drawImage(this.getImage(nuvem_path), (j-2)*tsize, i*tsize, null);
+                    
+                } else {
+                    //deixou de desenhar o fundo, para que entre o background                    
+                }
+                
+                //g.setColor(Color.black);
+                //g.drawString(" "+tile_num+", ("+this.getLogic(i, j) +")", j*this.tsize, i*this.tsize+20);
+            }    
+        }
+    }
+    
+    public void draw(Graphics g, int col0, int colf, int row0, int rowf){
+        
+        for(int j = col0; j < colf; j++){
+            for(int i = row0; i < rowf; i++){
                 
                 int tile_num = this.getTile(i, j);
                 

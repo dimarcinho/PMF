@@ -1,16 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package objects;
 
 import java.awt.Graphics;
 import java.util.LinkedList;
 
-/**
- *
- * @author Marcio
- */
 public class ItemController {
     
     public LinkedList<Item> items;

@@ -23,9 +23,6 @@ public class Boss_Hit_State extends BossState {
         count = 0;
         
         b.setFrames(10, 1);
-        
-        pg = new ParticleGenerator(0,0,0);
-        pg.addBasicParticles(b.x+32,b.y+64,30);
 
     }
 
@@ -46,6 +43,7 @@ public class Boss_Hit_State extends BossState {
         
                                 
         if(b.lifepoints <= 0){
+            bsm.states.peek().b.clearShots();
             bsm.setState(new Boss_Death_State(this.b,this.bsm));
         }
         
@@ -56,17 +54,11 @@ public class Boss_Hit_State extends BossState {
         }
         
         b.update();
-        pg.update();
-        
-        System.out.println(b.frameNumber+","+this.b.frameNumber);
-        System.out.println(b.lifepoints);
-        
     }
 
     @Override
     public void draw(Graphics g) {
         b.draw(g);
-        pg.draw(g);
     }
 
     @Override

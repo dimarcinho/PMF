@@ -17,10 +17,9 @@ public class WalkingState extends PlayerState {
     private int currentXdir, lastXdir;
     
     public WalkingState(Player p, PlayerStateManager psm){
-        super(p, psm);        
-        init();
-
+        super(p, psm);
         this.id = "WALKING_STATE";
+        init();
     }
 
 

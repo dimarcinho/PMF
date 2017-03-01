@@ -70,7 +70,7 @@ public class Boss_Advancing_State extends BossState {
     
     private void pursuit(){
         
-        //cria aleatoriedade no avanço, dificuldando a previsão de comportamento
+        //cria aleatoriedade no avanço, dificultando a previsão de comportamento
         rndInt = -5 + rnd.nextInt(10);
         
         if(b.p.x > b.x){

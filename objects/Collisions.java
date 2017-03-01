@@ -5,12 +5,8 @@
 package objects;
 
 import java.util.ArrayList;
-import observerpattern.Observer;
-import observerpattern.Subject;
-import playerstates.JumpingState;
-import playerstates.PlayerStateManager;
-import playerstates.StandingState;
-import playerstates.WalkingState;
+import observerpattern.*;
+import playerstates.*;
 import pmf.GamePanel;
 
 
@@ -31,7 +27,7 @@ public class Collisions implements Subject {
                         EnemyController ec, ItemController ic) {
         this.psm = psm;        
         this.map = map;
-        this.p = psm.states.peek().p;
+        this.p = psm.getPlayer();
         this.ec = ec;
         this.ic = ic;
         
@@ -48,10 +44,14 @@ public class Collisions implements Subject {
     
     public void update(){
         
-        this.collisionEnemies();
         this.shotEnemies();
+        this.collisionEnemies();        
         this.collisionItems();
         this.p_gen.update();
+        this.collisionWorld();
+    }
+    
+    public void collisionWorld(){
         
         //define limites de colisão apenas no entorno do player
         int limite = 0; //em tiles
@@ -94,14 +94,16 @@ public class Collisions implements Subject {
             p.y = map.getTileBounds(row0+1, col0).y-32;
             //System.out.println("vy > 0");
             
-            if(!psm.states.peek().id.equals("STANDING_STATE") || !psm.states.peek().id.equals("WALKING_STATE")){
-                System.out.println("Encostando no chão!");
-                
-                //psm.setState(new WalkingState(psm.states.peek().p, this.psm));
-                
-                psm.setState(new StandingState(psm.states.peek().p, this.psm));
-                
-            }   
+            if(!psm.getPlayer().isDead){            
+                if(!psm.states.peek().id.equals("STANDING_STATE") || !psm.states.peek().id.equals("WALKING_STATE")){
+                    System.out.println("Encostando no chão!");                
+                    psm.setState(new StandingState(psm.states.peek().p, this.psm));                
+                }
+            } else {
+                //Este é um estado do playre que afeta o estado do game,
+                //necessário trabalhar nisso antes.
+                //psm.setState(new DeadState(psm.getPlayer(), this.psm));                
+            }
         
         } else if(map.getTileBounds(row0+1, col0).intersects(p.getGhostBounds()) && map.getLogic(row0+1, col0) == 0){
             
@@ -110,7 +112,7 @@ public class Collisions implements Subject {
                        psm.setState(new JumpingState(psm.states.peek().p, this.psm)); 
                    }
                    
-        }
+        }        
         
     }
     
@@ -136,13 +138,15 @@ public class Collisions implements Subject {
         for(int i = 0; i < ec.enemies.size(); i++){
             
             if(this.p.getBounds().intersects(ec.enemies.get(i).getBounds()) 
-                    && this.p.isInvincible == false){
-                System.out.println("Colisão com inimigo detectada!!!!");
+                    && this.p.isInvincible == false
+                    && psm.getPlayer().isDead == false){
+                System.out.println("Colisão com inimigo detectada!!!!");                                
                 notify("PLAYER_HURT");                
             }
             
         }
         
+
     }
     
     public void shotEnemies(){

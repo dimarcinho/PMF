@@ -16,6 +16,8 @@ public class MenuState extends GameState {
     
     private Image fpsoImg, background_1, background_2;
     
+    
+    
     String background = "/res/img/background_sky.png";
     String bg2 = "/res/img/background_sea.png";
     
@@ -97,9 +99,7 @@ public class MenuState extends GameState {
         
         if(k == KeyEvent.VK_ENTER){
             if(select == 0){
-                gsm.states.push(new Level1State(gsm));
-                //gsm.states.push(new Boss1LevelState(gsm));
-                //System.out.println("Em desenvolvimento...");
+                gsm.states.push(new Level1State(gsm));                
             } else {
                 System.exit(0);
             }
@@ -111,6 +111,11 @@ public class MenuState extends GameState {
             else
                 select = 0;
         }
+        
+        //para testar LevelStates
+        if(e.getKeyCode() == KeyEvent.VK_T){
+            gsm.setState(new GameOverState(gsm));
+        }        
         
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
             System.exit(0);

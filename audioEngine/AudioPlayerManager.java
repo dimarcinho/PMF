@@ -2,53 +2,39 @@
 package audioEngine;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+//import java.util.Hashtable;
 import observerpattern.Observer;
 
 public final class AudioPlayerManager implements Observer{
+    /*
+    A ideia desta classe era para criar todos os aúdios na memória,
+    alocando-os dentro de um Array para depois utilizá-los durante o jogo
+    
+    Mas este processo está mais demorado do que simplesmente criar o áudio.
+    Desta maneira, esta classe em si acaba tornando-se "inútil", pois as mesmas
+    referências daqui poderiam estar diretamente dentro da classe AudioPlayer
+    
+    Por hora, deixo este texto aqui para lembrar o porquê desta classe.
+    */
 
     public ArrayList<AudioPlayer> audios;
     private ArrayList<Thread> threads;
-    private Hashtable<String, AudioPlayer> loaded;
-    
-    private AudioPlayer ap;
+    //private Hashtable<String, AudioPlayer> loaded;
     
     public AudioPlayerManager(){
         audios = new ArrayList<>();
         threads = new ArrayList<>();
-        loaded = new Hashtable<>();
         init();
     }
-    
+
     private void init(){
         //criar todos os arquivos de áudio na memória
-        loaded.put("JUMP", new AudioPlayer("/res/audio/sfx/Jump7.wav"));
-        loaded.put("DEATH", new AudioPlayer("/res/audio/sfx/Death.wav"));
-        loaded.put("SHOT", new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav"));
+        //loaded.put("JUMP", new AudioPlayer("/res/audio/sfx/Jump7.wav"));
+        //loaded.put("DEATH", new AudioPlayer("/res/audio/sfx/Death.wav"));
+        //loaded.put("SHOT", new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav"));
         
         audios.add(new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav"));
 
-    }
-    
-    public void play3(String s){
-        throw new UnsupportedOperationException("Utilizado apenas para testes");
-        
-        
-        //ap = new AudioPlayer("/res/audio/sfx/Laser_Shoot3.wav");               
-        
-        //AudioPlayer audio2 = ap;
-        //audio2.play();
-        //ap = loaded.get(s);
-        
-        //ap = audios.get(0);        
-        //ap.play();
-        
-        //audios.get(0).play();
-        
-        /*
-         * testes mostraram que criar o áudio diretametne é mais rápido que
-         * armazená-los na memória, o que é estranho ao meu ver.
-         */
     }
     
     public void addAudioPlayer(AudioPlayer sound){
@@ -64,6 +50,7 @@ public final class AudioPlayerManager implements Observer{
             ap.stop();
             ap = null;
         }
+
     }
     
     public void play(String s){
@@ -83,8 +70,7 @@ public final class AudioPlayerManager implements Observer{
             for(int i = 0; i < 100; i++){
                 //System.out.println(ap.getVol());
                 ap.setLowVol(-5f);
-                System.out.println(i+": diminuindo o volume de "+ap.getClass().getName());
-                
+                System.out.println(i+": diminuindo o volume de "+ap.getClass().getName());                
             }
         }
     }
@@ -92,7 +78,7 @@ public final class AudioPlayerManager implements Observer{
     @Override
     public void onNotify(String s) {
         
-        AudioPlayer x;
+        final AudioPlayer x;
         
         switch(s){
             case "SHOT":
@@ -103,6 +89,7 @@ public final class AudioPlayerManager implements Observer{
                 break;
             case "DEATH":
                 x = new AudioPlayer("/res/audio/sfx/Death.wav");
+                this.stopAllSounds();
                 break;
             case "GET_BBL":
                 x = new AudioPlayer("/res/audio/sfx/Pickup_Coin.wav");
@@ -110,12 +97,31 @@ public final class AudioPlayerManager implements Observer{
             case "KILL_ENEMY":
                 x = new AudioPlayer("/res/audio/sfx/Hit_Hurt6.wav");
                 break;
+            case "PLAYER_HURT":
+                x = new AudioPlayer("/res/audio/sfx/Player_Hurt.wav");
+                break;
             default:
-                throw new IllegalArgumentException("Áudio criado não suportado.");
+                x = null;
+                System.out.println("Evento de áudio criado não suportado: "+s);                
+                //throw new IllegalArgumentException("Evento de áudio criado não suportado: "+s);
         }
         
         if(x != null){
+            
+            //threads separadas************
+            /*
+            new Thread(new Runnable(){
+                @Override
+                public void run(){
+                    x.play();
+                }
+            }).start();
+            */
+            //*********************
+            
+            //threads juntas*******
             x.play();
+            //*********************
         }
         
         

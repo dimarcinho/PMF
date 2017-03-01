@@ -32,7 +32,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         
         FPS = 60;
         gsm = new GameStateManager();
+        
         gsm.setState(new MenuState(this.gsm)); //define o início do jogo
+        
         addKeyListener(this);
         
         amp = new AudioPlayerManager();
@@ -41,8 +43,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                         
         t = new Timer(10, this);
         t.start();
-        
-        
         
     }
     
@@ -57,9 +57,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
     
     @Override
-    public void paintComponent(Graphics g){        
-        
-        //g.drawImage(this.getBackgroundImage(), 0, 0, this);
+    public void paintComponent(Graphics g){  
         
         gsm.draw(g);
 
@@ -73,8 +71,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public void update(){}
 
     @Override
-    public void actionPerformed(ActionEvent e) {        
+    public void actionPerformed(ActionEvent e) {
         
+        //GAME LOOP
         try{
            
             long startTime, endTime;
@@ -82,14 +81,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             gsm.update();            
             endTime = System.currentTimeMillis();
             while(endTime - startTime < 1000/FPS ){
-                endTime = System.currentTimeMillis();    
+                endTime = System.currentTimeMillis();
             }            
             
-        } catch(NullPointerException s) {
-            
-            //s.printStackTrace();
-            throw new IllegalStateException("Game has a null property at GameLoop", s);
-        }       
+        } catch(Exception s) {
+            throw new IllegalStateException("Game has a Exception at GameLoop: ", s);
+        }
         
         repaint();
     }

@@ -20,17 +20,19 @@ public class EnemyShot extends Shot {
         super(x, y, dir);
         this.tipo = tipo;
         
-        if(dir)
+        if(dir){
             this.vx = -speed;
-        else
+            this.setFrames(0, 7);
+        } else {
             this.vx = +speed;
+            this.setFrames(8, 7);
+        }
 
     }
     
     @Override
     public void init(){
-        this.ss = new SpriteSheet(i.load("/res/img/oil shot.png"));
-        this.setFrames(0, 7);
+        this.ss = new SpriteSheet(i.load("/res/img/shot_oil_drop.png"));
         this.frameSpeed = 8; //quanto maior, mais lento                
         this.speed = 10;
     }
@@ -54,8 +56,8 @@ public class EnemyShot extends Shot {
     
     @Override
     public void Animation(){
-        
-        frameSS = ss.crop2(frameNumber*40, 0, 40, 15);
+                
+        frameSS = ss.crop4(frameNumber, 8, 40, 15);
         
         if(counterSS % frameSpeed == 0){
             if(frameNumber < endFrame){
@@ -70,9 +72,6 @@ public class EnemyShot extends Shot {
         } else {
             counterSS++;
         }
-        
-        if(vx == 0 && vy == 0)
-            counterSS--;
     }
     
 }

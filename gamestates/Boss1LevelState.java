@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import boss_states.*;
 import boss_states.boss1.*;
 import objects.*;
+import objects.Player;
 import playerstates.*;
 import pmf.GamePanel;
 
@@ -20,7 +21,7 @@ import pmf.GamePanel;
  */
 public class Boss1LevelState extends GameState {
             
-    public Player player;
+    
     public Boss boss;    
     
     public PlayerStateManager psm;
@@ -39,16 +40,16 @@ public class Boss1LevelState extends GameState {
     public Boss1LevelState(GameStateManager gsm){
         super(gsm);
         
-        score = new Score();        
-        player = new Player(100, 500);
-        boss = new Boss(600, 400, player);
+        score = new Score();
+             
+        psm = new PlayerStateManager();        
+        psm.setState(new StandingState(new Player(100,500), this.psm));
         
         map = new MapTile(32, "/res/img/level1boss.png");        
-        camera = new Camera(player, map);        
-        psm = new PlayerStateManager();        
-        psm.setState(new StandingState(this.player, this.psm));
+        camera = new Camera(psm.getPlayer(), map);
         
         bsm = new BossStateManager();
+        boss = new Boss(600, 400, psm.getPlayer());
         bsm.setState(new Boss_Idle_State(this.boss, this.bsm));
         
         ec = new EnemyController();
@@ -128,8 +129,8 @@ public class Boss1LevelState extends GameState {
         boolean shotBoss = false;
         
         //checa se o player é atingido pelo Boss
-        if(player.getBounds().intersects(boss.getBounds()) && !boss.isInvencible){
-            player.reset();
+        if(psm.getPlayer().getBounds().intersects(boss.getBounds()) && !boss.isInvencible){
+            psm.getPlayer().reset(100, 100);
             gsm.states.remove(this);
             gsm.states.push(new Boss1LevelState(this.gsm));
             //player tocou no chefe!
@@ -137,8 +138,8 @@ public class Boss1LevelState extends GameState {
         
         //checa se o player é atingido pelos tiros do Boss
         for(Shot e : boss.esc.shots){
-            if(e.getBounds().intersects(player.getBounds())){
-                player.reset();
+            if(e.getBounds().intersects(psm.getPlayer().getBounds())){
+                psm.getPlayer().reset(100,100);
                 gsm.states.remove(this);
                 gsm.states.push(new Boss1LevelState(this.gsm));
                 //player atingido pelo tiro do boss!!!
@@ -148,10 +149,10 @@ public class Boss1LevelState extends GameState {
         //****************** inserir rotina para morte do player e reset da "fase Boss" ************
         
         //checa se o Boss é atingido pelos tiros do player
-        for(Shot e: player.sc.shots){
+        for(Shot e: psm.getPlayer().sc.shots){
             if(e.getBounds().intersects(boss.getWeakPoint()) && !boss.isInvencible){
                 //chefe atingido no ponto fraco!!! 
-                player.sc.shots.remove(e);
+                psm.getPlayer().sc.shots.remove(e);
                 shotBoss = true;
                 break;
                 //não setando o estado direto aqui pois estava dando erro no linkedlist...

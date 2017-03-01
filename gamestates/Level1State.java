@@ -1,7 +1,7 @@
 
 package gamestates;
 
-import audioEngine.AudioPlayerManager;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -11,11 +11,12 @@ import objects.*;
 import observerpattern.*;
 import playerstates.*;
 import pmf.GamePanel;
+import pmf.PMF;
 
 
 public class Level1State extends GameState implements Subject {
     
-    public Player player;    
+    //public Player player;    
     public PlayerStateManager psm;
     public MapTile map;
     public Camera camera;
@@ -27,7 +28,6 @@ public class Level1State extends GameState implements Subject {
     
     
     private ArrayList<Observer> observers;
-    private AudioPlayerManager APM = new AudioPlayerManager();
 
     String background = "/res/img/background_sky.png";
     //String background = "/res/img/background_pink.png";
@@ -35,25 +35,27 @@ public class Level1State extends GameState implements Subject {
     
     public Item greenFlag;
     
+    private int exitCounter = 0, exitMax = 30, enterCounter = 0, enterMax = 30;
+    private boolean isExiting = false, isEnter = false;    
+    
+    public Fire fire;
+    
     public Level1State(GameStateManager gsm){
         super(gsm);
         
         observers = new ArrayList<>();
-        
         score = new Score();        
         
-        //player = new Player(6000, 10);
-        player = new Player(100, 250);
-        
-        lifepoints = new LifePoints(player);
+        //player = new Player(5950, 10);
+        //player = new Player(100, 250);
+        psm = new PlayerStateManager();        
+        psm.setState(new StandingState(new Player(100,240), this.psm));
         
         map = new MapTile(32, "/res/img/levelteste.png");
+        //map = new MapTile(32, "/res/img/Level_4.png");        
+        camera = new Camera(psm.getPlayer(), map);
         
-        camera = new Camera(player, map);
-        
-        psm = new PlayerStateManager();
-        
-        psm.setState(new StandingState(this.player, this.psm));
+        lifepoints = new LifePoints(psm.getPlayer());
         
         ec = new EnemyController();
         ic = new ItemController();
@@ -74,11 +76,7 @@ public class Level1State extends GameState implements Subject {
         greenFlag = new Item(197*map.tsize,9*map.tsize,1);
         
         ic.addItem(greenFlag);
-        
-        ic.addItem(new Item(19*map.tsize,13*map.tsize,0));
-        ic.addItem(new Item(18*map.tsize,13*map.tsize,0));
-        ic.addItem(new Item(17*map.tsize,13*map.tsize,0));
-        ic.addItem(new Item(16*map.tsize,13*map.tsize,0));
+
         ic.addItem(new Item(19*map.tsize,12*map.tsize,0));
         ic.addItem(new Item(18*map.tsize,12*map.tsize,0));
         ic.addItem(new Item(17*map.tsize,12*map.tsize,0));
@@ -94,9 +92,12 @@ public class Level1State extends GameState implements Subject {
     @Override
     public void init() {
         
-        this.addObserver(APM);
-                        
-        GamePanel.amp.loop("/res/audio/music/level1-1.mp3");
+        this.addObserver(GamePanel.amp);
+        this.addObserver(score);
+        
+        isEnter = true;
+                              
+        GamePanel.amp.loop("/res/audio/music/level1-1.mp3");        
         
     }
 
@@ -118,32 +119,64 @@ public class Level1State extends GameState implements Subject {
     @Override
     public void update() {
         
-        psm.update();        
-        ec.update();
-        ic.update();
-        collisions.update();
-        lifepoints.update(psm.states.peek().p);
-        camera.update(psm.states.peek().p);
-        
-        //desenvolver metodologia para morte em buracos
-        //usar Zones na classe collisions!
-        if(player.y > 1220 || player.lifePoints == 0){
-            notify("DEATH");
-            score.reset();
-            GamePanel.amp.stopAllSounds();
-            gsm.states.push(new Level1State(this.gsm));
+        if(isEnter){
+            enterCounter++;
+            if(enterCounter > enterMax){
+                isEnter = false;
+            }
         }
         
-        if(player.getBounds().intersects(greenFlag.getBounds())){
-            GamePanel.amp.stopAllSounds();
-            gsm.states.push(new Boss1LevelState(this.gsm));
-        }
+        if(!isExiting){
+            
+            psm.update();        
+            ec.update();
+            ic.update();
+            collisions.update();
+            lifepoints.update(psm.getPlayer());
+            camera.update(psm.getPlayer());
+            score.setLifes(psm.getPlayer().lifes);
 
+            if(psm.getPlayer().getBounds().intersects(greenFlag.getBounds())){
+                notify("NEXT_LEVEL");
+                GamePanel.amp.stopAllSounds();
+                gsm.setState(new Boss1LevelState(this.gsm));
+            }
+            
+            //desenvolver metodologia para morte em buracos
+            //usar Zones na classe collisions!
+            // --> a porte tem q ser informada pela classe Collisions;
+            //desta maneira, as intâncias dos levels apenas irão checar.
+            if(psm.getPlayer().y > 1220){
+                notify("DEATH");
+                psm.getPlayer().dead();
+                isExiting = true;
+            } else if(psm.getPlayer().isDead) {
+                notify("DEATH");
+                isExiting = true;
+            }
+            
+        } else {
+            
+            if(exitCounter > 75){
+                for(int i = 0; i < 120; i++){
+                    //apenas espera;
+                }
+                score.reset();
+                gsm.setState(new Level1State(this.gsm));
+            }
+        }
+        
+        if(isExiting){
+            if(psm.getPlayer().getLifes() <= 0 && exitCounter == exitMax){
+                gsm.setState(new GameOverState(gsm));
+            }
+        }
     }
     
 
     @Override
-    public void draw(Graphics g){        
+    public void draw(Graphics g){
+        
         g.drawImage(this.getBackgroundImage(background), 0, 0, null);
         g.drawImage(this.getBackgroundImage(bg1), 0, 700, null);
         
@@ -153,13 +186,44 @@ public class Level1State extends GameState implements Subject {
         ec.draw(g);
         ic.draw(g);
         
-        collisions.p_gen.draw(g);        
-        
-        player.draw(g);
-        
+        collisions.p_gen.draw(g);
+                
         g.translate(-camera.offsetX, -camera.offsetY);
         score.draw(g);
         lifepoints.draw(g);
+        
+        if(isEnter){
+            enterLevel(g);
+        }
+        
+        if(isExiting){
+            exitLevel(g);
+        }
+    }
+    
+    public void enterLevel(Graphics g){
+        int RGBcode = 0;
+        float alpha;
+        alpha = (255f-255f*((float)enterCounter/(float)enterMax));
+        g.setColor(new Color(RGBcode,RGBcode,RGBcode,(int)alpha));
+        g.fillRect(0, 0, PMF.WIDTH, PMF.HEIGHT);
+        
+    }
+        
+    public void exitLevel(Graphics g){
+        int stepHeight = 10;
+        exitMax = PMF.HEIGHT/stepHeight;
+        exitCounter++;
+        //loop tá horrível, mas funciona; acho que um simple if() basta
+        for(int i = exitCounter - 2; i < exitCounter; i++){                
+            g.setColor(Color.black);
+            g.fillRect(0, 0, PMF.WIDTH, i*stepHeight);
+            if(exitCounter > exitMax){
+                exitCounter = exitMax;
+            }            
+        }      
+        
+        
     }
     
     public Image getBackgroundImage(String bg){
@@ -173,10 +237,16 @@ public class Level1State extends GameState implements Subject {
         
         if(e.getKeyCode() == KeyEvent.VK_P){
             gsm.states.push(new PausedState(this.gsm));
-        }
+        }   
         
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
             System.exit(0);
+        }
+        
+        //TESTANDO CÓDIGO DE TRANSIÇÃO
+        if(e.getKeyCode() == KeyEvent.VK_ENTER){
+            this.isExiting = !isExiting;
+            exitCounter = 0;
         }
     }
 
@@ -199,6 +269,7 @@ public class Level1State extends GameState implements Subject {
     public void notify(String s) {
         for(Observer o: observers){
             o.onNotify(s);
+            System.out.println("Evento "+s+" enviado para :"+o);
         }
     }
 }

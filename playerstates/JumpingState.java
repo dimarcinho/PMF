@@ -13,10 +13,9 @@ public class JumpingState extends PlayerState {
     private int currentXdir, lastXdir;
     
     public JumpingState(Player p, PlayerStateManager psm){
-        super(p, psm);        
-        init();
-        
+        super(p, psm);
         this.id = "JUMPING_STATE";
+        init();
     }
     
     @Override
@@ -108,29 +107,6 @@ public class JumpingState extends PlayerState {
         if(isDown(KeyEvent.VK_SPACE)){
             p.shoot();
         }
-        
-        /*
-        if(key == KeyEvent.VK_UP){
-            
-        } 
-        if(key == KeyEvent.VK_DOWN) {
-            
-        } 
-        if(key == KeyEvent.VK_LEFT) {
-            
-            //p.vx = -p.speed;            
-            p.flyLeft();
-        } 
-        if(key == KeyEvent.VK_RIGHT){
-
-            //p.vx = +p.speed;            
-            p.flyRight();
-        }
-        
-        if(key == KeyEvent.VK_SPACE){
-            p.shoot();
-        }
-        */
     }
     
     @Override

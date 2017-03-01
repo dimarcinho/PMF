@@ -30,7 +30,7 @@ public class LifePoints extends Animated {
             this.frameSpeed = 10;
             switch(lifepoints){
                 default:
-                    System.out.println("Erro em Lifepoints draw()");
+                    System.out.println("-- Erro em Lifepoints.update() -- "+lifepoints);
                     break;
                 case 4:
                     this.setFrames(0, 1);
@@ -44,6 +44,9 @@ public class LifePoints extends Animated {
                 case 1:
                     this.setFrames(6, 3);
                     this.frameSpeed = 5;
+                    break;
+                case 0:
+                    //Player morre
                     break;
               
             }

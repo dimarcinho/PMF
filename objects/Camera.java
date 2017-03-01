@@ -1,9 +1,7 @@
 
 package objects;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import pmf.PMF;
 
 public class Camera {
     
@@ -44,10 +42,15 @@ public class Camera {
     
     public void update(Player p){
 
-        col0 = 0;
-        row0 = 0;
-        colf = map.col;
-        rowf = map.row;                
+        col0 = (p.x-width/2)/32;
+        row0 = (p.y-height/2)/32;
+        colf = (p.x+width/2)/32;
+        rowf = (p.y+height/2)/32;
+        
+        col0 = (p.x-100)/32;
+        row0 = (p.y-100)/32;
+        colf = (p.x+100)/32;
+        rowf = (p.y+100)/32;
 
         offsetX = -p.x+this.width/2;
         offsetY = -p.y+this.height/2+100;
@@ -73,6 +76,7 @@ public class Camera {
 
         g.translate(offsetX, offsetY);       
         map.draw(g);
+        //map.draw(g, col0, colf, row0, rowf);
         
     }
     

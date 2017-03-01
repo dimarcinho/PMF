@@ -66,7 +66,7 @@ public class Item extends Animated {
     private void AdjustItemAnimation(int tipo){
         switch(tipo){
             default:
-                System.out.println("Erro em AdjustItemAnimation() da classe Item");
+                System.out.println("Erro em Item.AdjustItemAnimation()");
                 break;
             case 0:
                 //barril está sem animação
@@ -106,9 +106,6 @@ public class Item extends Animated {
         } else {
             counterSS++;
         }
-        
-        if(vx == 0 && vy == 0)
-            counterSS--;
-    
+
     }
 }

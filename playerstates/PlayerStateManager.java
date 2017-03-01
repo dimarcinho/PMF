@@ -4,6 +4,7 @@ package playerstates;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
+import objects.Player;
 import observerpattern.Observer;
 
 public class PlayerStateManager implements Observer {
@@ -43,6 +44,10 @@ public class PlayerStateManager implements Observer {
     
     public PlayerState getState(){
         return this.states.getLast();        
+    }
+    
+    public Player getPlayer(){
+        return this.states.peek().p;
     }
 
     @Override
