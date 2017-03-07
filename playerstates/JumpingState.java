@@ -46,6 +46,8 @@ public class JumpingState extends PlayerState {
     @Override
     public void update() {
         
+        input.update();
+                
         p.vy += p.g;
         
         p.x += p.vx;
@@ -58,6 +60,8 @@ public class JumpingState extends PlayerState {
         p.Animation();
         
         p.sc.update();
+        
+        handleInput();
     }
     
     public void updateAnimation(){
@@ -78,45 +82,45 @@ public class JumpingState extends PlayerState {
         p.draw(g);
         p.sc.draw(g);
     }
+    
+    public void handleInput(){
+        
+        for(int i=0; i < input.isDown.size(); i++){
+            
+            if(input.isDown.get(i) == input.KEY_UP){
+
+            } 
+            if(input.isDown.get(i) == input.KEY_DOWN){
+
+            } 
+            if(input.isDown.get(i) == input.KEY_LEFT){
+
+                p.flyLeft();
+            } 
+            if(input.isDown.get(i) == input.KEY_RIGHT){
+
+                p.flyRight();
+            }            
+        }
+        
+        if(input.isPressed(input.KEY_SPACE)){
+            p.shoot();            
+        }
+    }
 
     @Override
     public void keyPressed(KeyEvent e){
-        int key = e.getKeyCode();
         
-        if(!isDown(key)){
-            isPressed.add(key);
-        }
-        
-        if(isDown(KeyEvent.VK_UP)){
-            
-        } 
-        if(isDown(KeyEvent.VK_DOWN)) {
-            
-        } 
-        if(isDown(KeyEvent.VK_LEFT)) {
-            
-            //p.vx = -p.speed;            
-            p.flyLeft();
-        } 
-        if(isDown(KeyEvent.VK_RIGHT)){
-
-            //p.vx = +p.speed;            
-            p.flyRight();
-        }
-        
-        if(isDown(KeyEvent.VK_SPACE)){
-            p.shoot();
-        }
+        input.keyPressed(e);        
     }
     
     @Override
     public void keyReleased(KeyEvent e){
+                
+        input.keyReleased(e);
+        
         int key = e.getKeyCode();
-        
-        if(isPressed.indexOf(key) != -1){
-            isPressed.remove(isPressed.indexOf(key));
-        }
-        
+                
         if(key == KeyEvent.VK_UP){
 
         } 

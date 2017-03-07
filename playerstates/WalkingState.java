@@ -54,6 +54,9 @@ public class WalkingState extends PlayerState {
     @Override
     public void update() {
         
+        input.update();
+        
+        
         p.vy = 0;
         
         p.vx += p.accX;
@@ -81,7 +84,7 @@ public class WalkingState extends PlayerState {
             System.out.println("Walking --> Standing;");
             this.psm.setState(new StandingState(this.p, this.psm)); 
         }
-
+        handleInput();
     }
     
     public void updateAnimation(){
@@ -102,64 +105,45 @@ public class WalkingState extends PlayerState {
         p.draw(g);
         p.sc.draw(g);
     }
+    
+    public void handleInput(){
+        
+        for(int i=0; i < input.isDown.size(); i++){
+            
+            if(input.isDown.get(i) == input.KEY_UP){
+                p.jump(id);
+                this.psm.setState(new JumpingState(this.p, this.psm));                
+            }            
+            if(input.isDown.get(i) == input.KEY_DOWN) {
+
+            } 
+            if(input.isDown.get(i) == input.KEY_LEFT) {
+                p.moveLeft();
+            } 
+            if(input.isDown.get(i) == input.KEY_RIGHT){
+                p.moveRight();
+            }
+        }
+        
+        if(input.isPressed(input.KEY_SPACE)){
+            p.shoot();            
+        }
+        
+    }
 
     @Override
     public void keyPressed(KeyEvent e){
-        int key = e.getKeyCode();
         
-        if(!isDown(key)){
-            isPressed.add(key);
-        }
-        
-        if(isDown(KeyEvent.VK_UP)){
-            p.jump(id);
-            this.psm.setState(new JumpingState(this.p, this.psm));
-        } 
-        if(isDown(KeyEvent.VK_DOWN)) {
-            
-        } 
-        if(isDown(KeyEvent.VK_LEFT)) {
-            p.moveLeft();
-        } 
-        if(isDown(KeyEvent.VK_RIGHT)){
-            p.moveRight();
-        }
-        
-        if(isDown(KeyEvent.VK_SPACE)){
-            p.shoot();
-        }
-        /*
-        if(key == KeyEvent.VK_UP){
-            
-            p.jump(id);
-            this.psm.setState(new JumpingState(this.p, this.psm));
-            
-        } else if(key == KeyEvent.VK_DOWN) {            
-                       
-        } else if(key == KeyEvent.VK_LEFT) { 
-            
-            p.moveLeft();
-
-        } else if(key == KeyEvent.VK_RIGHT){
-
-            p.moveRight();
-
-        } 
-        
-        if(key == KeyEvent.VK_SPACE){
-            p.shoot();
-        }
-        */
+        input.keyPressed(e);
     }
     
     @Override
     public void keyReleased(KeyEvent e){
+        
+        input.keyReleased(e);
+        
         int key = e.getKeyCode();
-        
-        if(isPressed.indexOf(key) != -1){
-            isPressed.remove(isPressed.indexOf(key));
-        }
-        
+                
         if(key == KeyEvent.VK_UP){
 
         } 
@@ -175,8 +159,6 @@ public class WalkingState extends PlayerState {
             p.accX = 0;
         }   
     }
-
-
     
 }
 
