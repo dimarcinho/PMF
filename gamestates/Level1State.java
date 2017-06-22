@@ -52,7 +52,7 @@ public class Level1State extends GameState implements Subject {
         psm.setState(new StandingState(new Player(100,240), this.psm));
         
         map = new MapTile(32, "/res/img/levelteste.png");
-        //map = new MapTile(32, "/res/img/Level_4.png");        
+        //map = new MapTile(32, "/res/img/levelteste2.png");
         camera = new Camera(psm.getPlayer(), map);
         
         lifepoints = new LifePoints(psm.getPlayer());
@@ -144,8 +144,8 @@ public class Level1State extends GameState implements Subject {
             
             //desenvolver metodologia para morte em buracos
             //usar Zones na classe collisions!
-            // --> a porte tem q ser informada pela classe Collisions;
-            //desta maneira, as intâncias dos levels apenas irão checar.
+            // --> a morte tem q ser informada pela classe Collisions;
+            //desta maneira, as instâncias dos levels apenas irão checar.
             if(psm.getPlayer().y > 1220){
                 notify("DEATH");
                 psm.getPlayer().dead();

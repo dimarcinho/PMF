@@ -114,7 +114,12 @@ public class MenuState extends GameState {
         
         //para testar LevelStates
         if(e.getKeyCode() == KeyEvent.VK_T){
-            gsm.setState(new GameOverState(gsm));
+            //gsm.setState(new GameOverState(gsm));
+            gsm.setState(new Test_Level_State(gsm));
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_B){            
+            gsm.setState(new Boss1LevelState(gsm));
         }        
         
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
